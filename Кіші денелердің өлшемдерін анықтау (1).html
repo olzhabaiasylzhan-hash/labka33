@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Зертханалық жұмыс — Кіші денелердің өлшемдерін анықтау</title>
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#667085;--blue:#2563eb;--blue2:#dbeafe;--green:#16a34a;--orange:#ea580c;--red:#dc2626;--border:#dbe2ea;--panel:#f8fafc}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);font-family:Arial,Helvetica,sans-serif;color:var(--text);line-height:1.55}
+.container{max-width:1150px;margin:0 auto;padding:24px}
+.hero{background:linear-gradient(135deg,#173b8f,#2563eb);color:#fff;border-radius:24px;padding:32px;box-shadow:0 12px 30px rgba(23,59,143,.15)}
+.hero h1{margin:0 0 10px;font-size:32px}.hero p{margin:6px 0;opacity:.94}
+.hero .obj{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:14px;padding:10px 14px;font-size:14px;margin-top:12px}
+.badge{display:inline-block;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.33);padding:7px 12px;border-radius:999px;margin-bottom:14px;font-size:14px;font-weight:bold}
+#scw{text-align:right;margin:10px 4px 0;font-weight:bold;color:var(--orange);font-size:17px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:18px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:0 5px 18px rgba(24,34,48,.04)}
+.card h2{margin-top:0;font-size:21px}.card h3{font-size:17px;margin-bottom:8px}
+.full{grid-column:1/-1}
+.callout{padding:15px 17px;border-radius:14px;background:var(--blue2);border-left:5px solid var(--blue)}
+.hyp{background:#eefcf3;border-left:5px solid var(--green)}
+.warning{background:#fff8eb;border-left:5px solid var(--orange)}
+.formula{font-size:22px;font-weight:bold;text-align:center;padding:10px;background:#fff;border-radius:10px;border:1px dashed var(--blue);margin:8px 0}
+ul,ol{padding-left:22px}
+.variables{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.var{padding:15px;border-radius:14px;background:var(--panel);border:1px solid var(--border)}
+.var b{display:block;margin-bottom:5px}
+.blue{border-top:4px solid var(--blue)}.green{border-top:4px solid var(--green)}.orange{border-top:4px solid var(--orange)}
+select,input[type=text],input[type=password],textarea{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;font-size:15px}
+input[type=radio]{width:auto}
+button.action-btn{border:0;border-radius:10px;padding:11px 17px;background:var(--blue);color:#fff;font-weight:bold;cursor:pointer;font-size:14px}
+button.action-btn.secondary{background:#64748b}
+button.action-btn:hover{opacity:.9}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0;align-items:center}
+.small{font-size:13px;color:var(--muted)}
+.check{padding:14px;border-radius:14px;background:var(--panel);border:1px solid var(--border)}
+.fb{font-size:14px;margin:4px 0}.ok{color:var(--green);font-weight:bold}.no{color:var(--red);font-weight:bold}
+footer{text-align:center;color:var(--muted);padding:25px}
+canvas.ch{display:block;width:100%;height:auto;border:1px solid var(--border);border-radius:12px;background:#fff}
+canvas.wk{touch-action:none;cursor:ew-resize}
+.tray{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0;padding:10px;background:#e2e8f0;border-radius:14px}
+.tr{width:140px;border:2px dashed #94a3b8;border-radius:12px;background:#fff;text-align:center;font-size:12px;cursor:grab;padding:6px;user-select:none;touch-action:none}
+.tr:hover{border-color:var(--blue);background:var(--blue2)}
+.tr svg{display:block;margin:0 auto 2px;pointer-events:none}
+.gs{display:flex;gap:8px;align-items:flex-start;margin:4px 0;font-size:14px}
+.gs.d{color:var(--green);font-weight:bold}
+.qrow{margin:8px 0}.qrow label{display:block;font-weight:bold;font-size:14px;margin-bottom:4px}
+.qrow select{max-width:520px}
+table.rt{border-collapse:collapse;width:100%;font-size:14px;margin:8px 0;background:#fff}
+table.rt th,table.rt td{border:1px solid #94a3b8;padding:6px 8px;text-align:center}
+table.rt th{background:#dbeafe}
+table.rt input{width:84px;padding:5px;text-align:center}
+.tkgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+#toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
+#toolbar button{flex:1;min-width:170px;padding:12px;border-radius:12px;border:0;background:var(--blue);color:#fff;font-weight:bold;font-size:15px;cursor:pointer}
+#toolbar button.pdf{background:#dc2626}
+#lang{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
+#lang button{flex:1;min-width:130px;padding:12px;border-radius:12px;border:2px solid var(--blue);background:#fff;color:var(--blue);font-weight:bold;font-size:15px;cursor:pointer}
+#lang button.on{background:var(--blue);color:#fff}
+.sen-only{display:none}
+body.sen{font-size:19px;background:#fff;color:#000}body.sen .sen-only{display:block}body.sen .card{border:3px solid #000}
+body.sen .action-btn{font-size:18px;padding:14px 20px}body.sen input,body.sen select,body.sen textarea{font-size:19px}
+body.sen .small{font-size:17px;color:#222}body.sen h2{font-size:26px}
+.namebox{display:flex;gap:24px;flex-wrap:wrap;align-items:flex-end;background:#fff;border:1px solid var(--border);border-radius:18px;padding:18px 22px;margin-bottom:14px}
+.namebox .nr{display:flex;align-items:flex-end;gap:10px;font-weight:bold}
+.namebox .nr.w{flex:1;min-width:260px}
+.namebox input[type=text]{border:0;border-bottom:2px solid #000;border-radius:0;padding:4px 6px;background:transparent;font-size:16px;width:100%}
+body.sen [data-i=sq],body.sen [data-i=sh],body.sen [data-i=sv],body.sen [data-i=st],body.sen #aib,body.sen details,body.sen #disw,body.sen #aiOut{display:none!important}
+body.sen .card{border-radius:24px;border-width:3px}
+body.sen .card h2{background:#dbeafe;border-radius:14px;padding:12px 16px;font-size:28px}
+body.sen .check{border:2px solid #2563eb;background:#f0f7ff;font-size:20px}
+body.sen .tr{width:170px;font-size:16px;border-width:3px}
+body.sen .hero h1{font-size:36px}
+body.sen table.rt{font-size:19px}
+body.sen table.rt input{width:110px;font-size:20px;padding:8px}
+body.sen .gs{font-size:19px;background:#fff7ed;border-radius:12px;padding:10px;margin:8px 0}
+body.sen .gs.d{background:#ecfdf5}
+body.sen label{line-height:1.7}
+body.sen input[type=radio]{width:24px;height:24px}
+body.sen #lang button,body.sen #toolbar button{font-size:18px}
+body.sen .fb{font-size:19px}
+body.sen .callout{font-size:20px}
+body.sen .formula{font-size:30px}
+@media(max-width:900px){.tkgrid{grid-template-columns:1fr}}
+@media(max-width:800px){.grid{grid-template-columns:1fr}.variables{grid-template-columns:1fr 1fr}.hero h1{font-size:25px}.container{padding:14px}}
+@media(max-width:480px){.variables{grid-template-columns:1fr}}
+@page{size:A4;margin:12mm}
+@media print{
+*{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{background:#fff}.container{max-width:none;padding:0}
+#toolbar,#lang,.actions,#apik,details,#disw,.tray,select[data-ch],button[data-a],.sen-only,input[type=range]{display:none!important}
+.card,.hero{box-shadow:none;break-inside:avoid;page-break-inside:avoid}
+.grid{gap:10px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="namebox"><div class="nr w"><span id="nl1"></span><input type="text" id="stName" autocomplete="off"></div><div class="nr"><span id="nl2"></span><input type="text" id="stCls" style="width:110px" autocomplete="off"></div></div>
+<div id="toolbar"><button type="button" id="printBtn"></button><button type="button" class="pdf" id="pdfBtn"></button></div>
+<nav id="lang"><button data-l="kk">Қазақша</button><button data-l="ru">Русский</button><button data-l="en">English</button><button data-l="sen">♿ ЕҚБ · Жеңілдетілген</button></nav>
+
+<header class="hero" data-i="hero"></header>
+<div id="scw"><span id="sc"></span></div>
+
+<div class="grid">
+<section class="card full" data-i="sq"></section>
+<section class="card" data-i="sa"></section>
+<section class="card" data-i="sh"></section>
+<section class="card full" data-i="th"></section>
+<section class="card full" data-i="sv"></section>
+<section class="card" data-i="st"></section>
+<section class="card" data-i="ss"></section>
+<section class="card full" data-i="so"></section>
+
+<section class="card full" id="step1"><h2 data-i="s1h"></h2>
+<p class="small" data-i="s1p"></p>
+<div class="sen-only callout hyp">📏 Әр сөйлемді оқы → ✅ немесе ⛔ таңда → «Тексеру» бас. Қателессең — қорықпа! 😊</div>
+<div id="sfbox"></div></section>
+
+<section class="card full" id="step3"><h2 data-i="s3h"></h2>
+<p class="small" data-i="s3p"></p>
+<div id="e1g"></div><div class="tray" id="e1tray"></div>
+<canvas class="ch wk" id="e1c" width="820" height="330"></canvas>
+<div class="actions" id="e1b"></div>
+<div id="e1t" style="overflow-x:auto"></div><div id="e1sm"></div>
+<h3 id="e1qh"></h3><div id="e1q"></div>
+<div class="actions"><button class="action-btn" data-a="e1chk" id="e1ck"></button></div><div class="fb" id="e1fb" style="line-height:1.7"></div></section>
+
+<section class="card full" id="step4"><h2 data-i="s4h"></h2>
+<p class="small" data-i="s4p"></p>
+<div id="e2g"></div><div class="tray" id="e2tray"></div>
+<canvas class="ch wk" id="e2c" width="820" height="330"></canvas>
+<div class="actions" id="e2b"></div>
+<div id="e2t" style="overflow-x:auto"></div><div id="e2sm"></div>
+<h3 id="e2qh"></h3><div id="e2q"></div>
+<div class="actions"><button class="action-btn" data-a="e2chk" id="e2ck"></button></div><div class="fb" id="e2fb" style="line-height:1.7"></div></section>
+
+<section class="card full" id="stepT"><h2 data-i="s2h"></h2>
+<p class="small" data-i="s2p"></p>
+<div class="tkgrid" id="tk"></div></section>
+
+<section class="card full"><h2 data-i="th5"></h2><div class="actions"><button class="action-btn" id="shuf"></button><button class="action-btn secondary" id="fin"></button></div><div id="tq" style="margin-top:12px"></div><h3 id="score"></h3></section>
+
+<section class="card full" id="concl"><h2 data-i="ch"></h2>
+<p data-i="cp"></p>
+<p><b data-i="cl"></b></p>
+<textarea id="conc" rows="6" data-ph="cph"></textarea>
+<div class="actions"><button class="action-btn" id="aib" data-i="aib"></button><button class="action-btn secondary" id="dlb" data-i="dlb"></button></div>
+<details style="margin-top:10px"><summary class="small" data-i="apis"></summary><p class="small" data-i="apin"></p><input type="password" id="apik" placeholder="sk-ant-..." autocomplete="off"></details>
+<div class="check" id="aiOut" style="display:none;margin-top:12px"></div>
+<div id="disw" style="display:none;margin-top:12px"><label><b data-i="dl"></b></label><textarea id="dis" rows="4" data-ph="dph"></textarea></div></section>
+
+<section class="card full" id="refl"><h2 data-i="rh"></h2><div id="rbox"></div></section>
+</div>
+<footer data-i="foot"></footer>
+</div>
+
+<script>
+(()=>{
+const $=i=>document.getElementById(i),RI=(a,b)=>a+Math.floor(Math.random()*(b-a+1)),RF=(a,b)=>a+Math.random()*(b-a),sh=a=>{a=[...a];for(let i=a.length;i>1;i--){const j=Math.floor(Math.random()*i);[a[i-1],a[j]]=[a[j],a[i-1]]}return a};
+const W=820,H=330,PI=Math.PI;
+const TOT=()=>8;
+const S={lang:'kk',sc:new Set(),sf:[],T:[],tv:{},k:null,rf:{}};
+const X=(k,r,e,s)=>({kk:k,ru:r,en:e,sen:s==null?k:s})[S.lang],XA=a=>X(a[0],a[1],a[2],a[3]);
+const esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML};
+const num=s=>parseFloat(String(s).replace(',','.'));
+function updSc(){$('sc').textContent='🏆 '+S.sc.size+' / '+TOT()+' '+'⭐'.repeat(S.sc.size)}
+function award(k){if(!S.sc.has(k)){S.sc.add(k);updSc()}}
+const ACT={},INP={};
+const pt=(e,c)=>{const r=c.getBoundingClientRect();return[(e.clientX-r.left)*W/r.width,(e.clientY-r.top)*H/r.height]};
+
+/* ---------- Қадам 1: қауіпсіздік ---------- */
+const SF=[
+[1,'Ұсақ денелерді (шарик, күріш, бұрыш) ауызға, мұрынға немесе құлаққа салмау.','Не брать мелкие предметы (бусины, рис, перец) в рот, нос или уши.','Never put small objects (beads, rice, pepper) in the mouth, nose or ears.'],
+[1,'Жұмыстан бұрын сызғыштың нөл белгісін және жарамдылығын тексеру.','Перед работой проверить нулевую отметку и исправность линейки.','Check the ruler zero mark and condition before working.'],
+[1,'Жұмыс орнын таза ұстау, жерге түскен шарикті дереу жинау.','Держать рабочее место в чистоте, упавший шарик сразу поднять.','Keep the workplace tidy and pick up a dropped bead at once.'],
+[1,'Бұранданы ұшынан емес, басынан ұстау; өткір ұшына сақ болу.','Брать болт за головку, а не за острый конец; быть осторожным с острием.','Hold the bolt by its head, not by the sharp tip, and be careful with it.'],
+[1,'Жұмыстан кейін денелерді қорапқа жинап, қолды жуу.','После работы собрать предметы в коробку и вымыть руки.','Put the objects back in the box and wash your hands afterwards.'],
+[1,'Қауіпті жағдай болса, мұғалімге дереу хабарлау.','При опасной ситуации сразу сообщить учителю.','Tell the teacher immediately in a dangerous situation.'],
+[0,'Жұмыс барысында күріш пен бұрышты дәміне қарау.','Пробовать рис и перец на вкус во время работы.','Taste the rice and pepper during the work.'],
+[0,'Сызғышты қылыш сияқты сермеп, сыныптасты ұру.','Размахивать линейкой и бить одноклассника.','Swing the ruler like a sword and hit a classmate.'],
+[0,'Шашылған шариктерді жерде қалдырып, үстінен басып жүру.','Оставить рассыпанные бусины на полу и ходить по ним.','Leave scattered beads on the floor and walk over them.'],
+[0,'Бұранданың ұшымен саусақты немесе көрші оқушыны түрту.','Тыкать острым концом болта в палец или в соседа.','Poke a finger or a classmate with the tip of the bolt.'],
+[0,'Сынған сызғыштың өткір жиегін жалаңаш қолмен ұстау.','Брать голыми руками острый край сломанной линейки.','Grab the sharp edge of a broken ruler with bare hands.'],
+[0,'Ұсақ денелерді таратып, оларды бір-біріне лақтыру.','Разбрасывать мелкие предметы и бросаться ими.','Throw small objects at each other.']];
+function safeR(){const nS=S.lang=='sen'?4:6;if(S.sf.length!=nS)S.sf=sh(SF).slice(0,nS);
+$('sfbox').innerHTML=S.sf.map((q,i)=>`<div class="check" style="margin-bottom:8px"><b>${X(q[1],q[2],q[3])}</b><div style="margin-top:6px"><label style="margin-right:16px"><input type="radio" name="sf${i}" value="1"> ✅ ${X('Қауіпсіз','Безопасно','Safe')}</label><label><input type="radio" name="sf${i}" value="0"> ⛔ ${X('Қауіпті','Опасно','Dangerous')}</label> <span class="fb" id="sff${i}"></span></div></div>`).join('')+`<div class="actions"><button class="action-btn" data-a="sfc">${X('Тексеру','Проверить','Check')}</button><button class="action-btn secondary" data-a="sfn">🔀 ${X('Жаңа тұжырымдар','Новые утверждения','New statements')}</button><b id="sfs"></b></div>`}
+ACT.sfn=()=>{S.sf=[];safeR()};
+ACT.sfc=()=>{let ok=0;S.sf.forEach((q,i)=>{const c=document.querySelector(`input[name=sf${i}]:checked`),o=$('sff'+i);if(!c){o.className='fb no';o.textContent=' '+X('Таңдаңыз','Выберите','Choose');return}const g=(+c.value)==q[0];ok+=g;o.className='fb '+(g?'ok':'no');o.textContent=g?' ✓ '+X('Дұрыс','Верно','Correct','Жарайсың! 🎉'):' ✗ '+X('Қате — қайта ойланыңыз','Неверно — подумайте ещё','Wrong — think again','Қайта көр 💪')});$('sfs').textContent=ok+' / '+S.sf.length;if(ok==S.sf.length)award('safe')};
+
+/* ---------- Қадам 2: қызықты тапсырмалар ---------- */
+function genK(){const Ns=[10,20,25,30,40,50],ds=[2.4,2.5,2.6,3.2,3.5,4.2],N=Ns[RI(0,5)],d=ds[RI(0,5)];S.k={N,d,L:Math.round(N*d*10)/10,d2:[2,2.5,4,5,10][RI(0,4)],Nc:[10,20,25,40,50][RI(0,4)],dc:[2.5,4,5][RI(0,2)]}}
+const DQ=[
+{t:['N = 5 және N = 50 денені қатарға қойып, бірдей сызғышпен өлшедік. Қайсысы дәлірек нәтиже береді?','Мы выложили в ряд N = 5 и N = 50 предметов и измерили той же линейкой. Какой результат точнее?','We laid N = 5 and N = 50 objects in a row and measured with the same ruler. Which result is more accurate?'],o:[['N = 5','N = 5','N = 5'],['N = 50','N = 50','N = 50'],['Екеуі бірдей','Одинаково','The same']],ok:1},
+{t:['Денелерді арасында саңылау қалдырып қойсақ, d қалай өзгереді?','Как изменится d, если оставить зазоры между предметами?','How does d change if gaps are left between the objects?'],o:[['Шын мәнінен үлкен шығады','Получится больше истинного','It comes out larger than the true value'],['Шын мәнінен кіші шығады','Получится меньше истинного','It comes out smaller than the true value'],['Өзгермейді','Не изменится','It does not change']],ok:0},
+{t:['Қатарды сызғыштың нөлінен емес, 1 см белгісінен бастап қойып, соңғы көрсеткішті L деп алсақ не болады?','Что будет, если ряд начать не с нуля, а с отметки 1 см и взять за L последнее показание?','What happens if the row starts at the 1 cm mark and the last reading is taken as L?'],o:[['d артық шығады','d получится завышенным','d comes out too large'],['d кем шығады','d получится заниженным','d comes out too small'],['Нәтиже дұрыс','Результат верный','The result is correct']],ok:0}];
+function tkR(){const K=S.k,sn=S.lang=='sen',v=id=>S.tv[id]==null?'':S.tv[id],opt=(a,id)=>`<select data-tv="${id}"><option value="">?</option>${a.map((x,i)=>`<option value="${i}" ${v(id)==String(i)?'selected':''}>${XA(x)}</option>`).join('')}</select>`,Dq=sn?DQ.slice(0,2):DQ;
+$('tk').innerHTML=
+`<div class="check"><h3>🍚 ${X('1-тапсырма. Күріш есебі','Задание 1. Рисовая задача','Task 1. The rice puzzle','1-тапсырма 🍚')}</h3><div class="qrow"><label>${X(`${K.N} күріш түйірін тығыз қатарға қойғанда ұзындық L = ${K.L} мм болды. Бір түйірдің ені d (мм) қанша?`,`${K.N} рисинок плотно выложили в ряд, длина L = ${K.L} мм. Чему равна ширина одной рисинки d (мм)?`,`${K.N} rice grains laid tightly in a row give L = ${K.L} mm. What is the width d of one grain (mm)?`,`🍚 ${K.N} күріш түйірін қатарға қойдық. Қатар ұзындығы L = ${K.L} мм. Бір түйір неше мм? (d = L ÷ N)`)}</label><input type="text" inputmode="decimal" data-tv="b1" value="${v('b1')}" style="max-width:160px"></div>${sn?'':`<div class="qrow"><label>${X(`d = ${K.d2} мм болатын шариктерден 10 см (100 мм) қатарға неше дана сияды?`,`Сколько бусин диаметром d = ${K.d2} мм поместится в ряд длиной 10 см (100 мм)?`,`How many beads of d = ${K.d2} mm fit in a row 10 cm (100 mm) long?`)}</label><input type="text" inputmode="decimal" data-tv="b2" value="${v('b2')}" style="max-width:160px"></div>`}<button class="action-btn" data-a="tkB">${X('Тексеру','Проверить','Check')}</button><div class="fb" id="tkBf"></div></div>`+
+PH()+
+`<div class="check"><h3>🕵️ ${X('4-тапсырма. Қатені тап','Задание 4. Найди ошибку','Task 4. Spot the mistake','2-тапсырма 🕵️')}</h3>${Dq.map((q,i)=>`<div class="qrow"><label>${XA(q.t)}</label>${opt(q.o,'d'+i)}</div>`).join('')}<button class="action-btn" data-a="tkD">${X('Тексеру','Проверить','Check')}</button><div class="fb" id="tkDf"></div></div>`}
+const FB=(id,ok,msg)=>{const o=$(id);o.className='fb '+(ok?'ok':'no');o.innerHTML=msg};
+const good=()=>X('Дұрыс','Верно','Correct','Жарайсың! 🎉'),bad=()=>X('Қате','Неверно','Wrong','Қайта көр 💪');
+ACT.tkB=()=>{const K=S.k,sn=S.lang=='sen',a=num(S.tv.b1),b=num(S.tv.b2),d0=K.L/K.N,n0=100/K.d2,r1=Math.abs(a-d0)<=.02,r2=sn||Math.abs(b-n0)<=.5;if(isNaN(a)||(!sn&&isNaN(b))){FB('tkBf',0,X('Жауапты жазыңыз.','Введите ответ.','Enter the answer.','Жауапты жаз ✍️'));return}FB('tkBf',r1&&r2,`${r1?'✓':'✗'} d = L/N ${r1?'':'(d = '+d0.toFixed(2)+')'}`+(sn?'':` &nbsp; ${r2?'✓':'✗'} N = 100/d ${r2?'':'(N = '+n0+')'}`));if(r1&&r2)award('calc')};
+ACT.tkC=()=>{const K=S.k,a=num(S.tv.c1),b=num(S.tv.c2),d0=.5/K.Nc,e0=d0/K.dc*100,r1=Math.abs(a-d0)<=.002,r2=Math.abs(b-e0)<=.1;if(isNaN(a)||isNaN(b)){FB('tkCf',0,X('Екі жауапты да жазыңыз.','Введите оба ответа.','Enter both answers.'));return}FB('tkCf',r1&&r2,`${r1?'✓':'✗'} Δd = 0,5/N ${r1?'':'('+d0.toFixed(3)+' мм)'} &nbsp; ${r2?'✓':'✗'} ε ${r2?'':'('+e0.toFixed(1)+' %)'}`);if(r1&&r2)award('err')};
+ACT.tkD=()=>{const Dq=S.lang=='sen'?DQ.slice(0,2):DQ;let ok=0,em=false;Dq.forEach((q,i)=>{const v=S.tv['d'+i];if(v==null||v==='')em=true;else if(+v==q.ok)ok++});if(em){FB('tkDf',0,X('Барлық сұраққа жауап беріңіз.','Ответьте на все вопросы.','Answer all questions.'));return}FB('tkDf',ok==Dq.length,ok==Dq.length?'🎉 '+good():`✗ ${ok}/${Dq.length} — `+X('Ойланыңыз: L қалай оқылса, d сол қарай өзгереді.','Подумайте: чем больше завышено L, тем больше d.','Think: the more L is overestimated, the larger d is.','Қайта ойлан 💪'));if(ok==Dq.length)award('comp')};
+
+/* ---------- Ортақ сызғыш пен үстел ---------- */
+const BG=(()=>{const c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');let gr=g.createLinearGradient(0,0,0,H);gr.addColorStop(0,'#b88650');gr.addColorStop(.5,'#a8743f');gr.addColorStop(1,'#8f5d30');g.fillStyle=gr;g.fillRect(0,0,W,H);
+for(let i=0;i<60;i++){const y=Math.random()*H;g.strokeStyle='rgba(80,45,20,'+(.08+Math.random()*.14)+')';g.lineWidth=.5+Math.random()*1.6;g.beginPath();g.moveTo(0,y);for(let x=0;x<=W;x+=40)g.lineTo(x,y+Math.sin(x/90+i)*3);g.stroke()}
+g.shadowColor='rgba(0,0,0,.4)';g.shadowBlur=16;g.shadowOffsetY=5;g.fillStyle='#fffefa';g.fillRect(6,6,W-12,H-12);g.shadowColor='transparent';
+g.strokeStyle='rgba(148,163,184,.13)';g.lineWidth=1;for(let x=43;x<W-6;x+=37){g.beginPath();g.moveTo(x,6);g.lineTo(x,H-6);g.stroke()}for(let y=43;y<H-6;y+=37){g.beginPath();g.moveTo(6,y);g.lineTo(W-6,y);g.stroke()}
+return c})();
+function trayDrag(id,cv,drop){const tr=$(id);tr.addEventListener('pointerdown',e=>{const it=e.target.closest('[data-t]');if(!it)return;e.preventDefault();const t=it.dataset.t;let moved=false;const gh=it.cloneNode(true);gh.style.cssText='position:fixed;pointer-events:none;opacity:.85;z-index:999;background:#fff;left:'+(e.clientX-60)+'px;top:'+(e.clientY-30)+'px';document.body.appendChild(gh);
+const mv=ev=>{moved=true;gh.style.left=(ev.clientX-60)+'px';gh.style.top=(ev.clientY-30)+'px'};
+const up=ev=>{document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',cn);gh.remove();const r=cv.getBoundingClientRect();if(moved&&ev.clientX>=r.left&&ev.clientX<=r.right&&ev.clientY>=r.top&&ev.clientY<=r.bottom)drop(t);else if(!moved)drop(t)};
+const cn=()=>{document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',cn);gh.remove()};
+document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);document.addEventListener('pointercancel',cn)})}
+const IC={
+ruler:`<svg viewBox="0 0 130 34" width="116" height="30"><rect x="4" y="4" width="122" height="26" fill="#e2e8f0" stroke="#475569" stroke-width="1.5"/>${Array.from({length:25},(_,i)=>`<line x1="${8+i*4.7}" y1="4" x2="${8+i*4.7}" y2="${i%5==0?20:12}" stroke="#111"/>`).join('')}</svg>`,
+bead:`<svg viewBox="0 0 80 50" width="70" height="44"><defs><radialGradient id="icbd" cx=".35" cy=".3"><stop offset="0" stop-color="#bfdbfe"/><stop offset=".5" stop-color="#2563eb"/><stop offset="1" stop-color="#1e3a8a"/></radialGradient></defs><circle cx="14" cy="30" r="10" fill="url(#icbd)"/><circle cx="36" cy="30" r="10" fill="url(#icbd)"/><circle cx="58" cy="30" r="10" fill="url(#icbd)"/></svg>`,
+rice:`<svg viewBox="0 0 80 50" width="70" height="44"><g fill="#fffbeb" stroke="#bfa86a"><ellipse cx="14" cy="26" rx="5" ry="13"/><ellipse cx="26" cy="26" rx="5" ry="13"/><ellipse cx="38" cy="26" rx="5" ry="13"/><ellipse cx="50" cy="26" rx="5" ry="13"/><ellipse cx="62" cy="26" rx="5" ry="13"/></g></svg>`,
+pepper:`<svg viewBox="0 0 80 50" width="70" height="44"><g fill="#374151" stroke="#111827"><circle cx="16" cy="30" r="8"/><circle cx="34" cy="30" r="8"/><circle cx="52" cy="30" r="8"/><circle cx="66" cy="30" r="8"/></g></svg>`,
+screw:c=>`<svg viewBox="0 0 120 44" width="110" height="40"><polygon points="6,6 22,6 28,22 22,38 6,38 0,22" fill="${c}" stroke="#111827"/><rect x="26" y="12" width="88" height="20" fill="#cbd5e1" stroke="#475569"/>${Array.from({length:14},(_,i)=>`<line x1="${32+i*6}" y1="12" x2="${35+i*6}" y2="32" stroke="#64748b"/>`).join('')}</svg>`};
+
+/* ---------- Зертханалық үлгі (екі тәжірибеге ортақ) ---------- */
+function mkLab(P,cfg){
+const cv=$(P+'c'),g=cv.getContext('2d'),E={ruler:false,cur:null,n:cfg.n0,line:0,recs:[],checked:false,sel:cfg.Q.map(()=>''),J:{},dr:false};
+const SEN=()=>S.lang=='sen',QQ=()=>SEN()&&cfg.Qs?cfg.Qs:cfg.Q,NEED=()=>SEN()?cfg.sneed:cfg.need;
+const keys=Object.keys(cfg.items),it=()=>cfg.items[E.cur],sc=cfg.sc,x0=cfg.x0,RY=236,rd=m=>Math.round(m*2)/2,nm=k=>XA(cfg.items[k].nm);
+const jit=(k,n)=>{const q=k+'_'+n;if(!(q in E.J))E.J[q]=RF(-cfg.jit,cfg.jit);return E.J[q]};
+const Lt=()=>E.cur?E.n*it().v+jit(E.cur,E.n):0;
+const mmU=()=>X('мм','мм','mm');
+function dRuler(){const x1=x0-28,x2=W-12;let gr=g.createLinearGradient(0,RY,0,RY+64);gr.addColorStop(0,'#f8fafc');gr.addColorStop(1,'#cbd5e1');g.save();g.shadowColor='rgba(0,0,0,.35)';g.shadowBlur=8;g.shadowOffsetY=4;g.fillStyle=gr;g.fillRect(x1,RY,x2-x1,64);g.restore();g.strokeStyle='#64748b';g.lineWidth=1.2;g.strokeRect(x1,RY,x2-x1,64);
+g.strokeStyle='#111';g.fillStyle='#111';g.lineWidth=1;g.font='bold 13px Arial';g.textAlign='center';
+for(let m=0;x0+m*sc<=x2-2;m++){const x=x0+m*sc,l=m%10==0?27:m%5==0?19:11;g.beginPath();g.moveTo(x,RY);g.lineTo(x,RY+l);g.stroke();if(m%10==0)g.fillText(String(m/10),x,RY+44)}
+g.font='11px Arial';g.textAlign='right';g.fillText(X('см','см','cm'),x2-6,RY+58);g.textAlign='left';g.fillText('1 '+X('бөлік = 1 мм','дел. = 1 мм','div. = 1 mm'),x1+6,RY+58)}
+function dLine(){const x=x0+E.line*sc,R=rd(E.line);g.strokeStyle='#dc2626';g.lineWidth=2;g.beginPath();g.moveTo(x,64);g.lineTo(x,RY+64);g.stroke();g.fillStyle='#dc2626';g.beginPath();g.arc(x,64,6,0,7);g.fill();
+const t='L = '+R.toFixed(1)+' '+mmU(),w=g.measureText(t).width+20;g.font='bold 14px Arial';const bw=g.measureText(t).width+18,bx=Math.max(8,Math.min(W-bw-8,x-bw/2));g.fillStyle='#fff';g.strokeStyle='#dc2626';g.lineWidth=1.5;g.fillRect(bx,32,bw,24);g.strokeRect(bx,32,bw,24);g.fillStyle='#dc2626';g.textAlign='center';g.fillText(t,bx+bw/2,49)}
+function draw(){g.drawImage(BG,0,0);if(E.cur)cfg.draw(g,E,it(),Lt(),sc,x0,RY);if(E.ruler){dRuler();dLine()}
+if(!E.ruler||!E.cur){g.fillStyle='rgba(100,116,139,.6)';g.font='bold 19px Arial';g.textAlign='center';g.fillText('⬇ '+XA(cfg.hint),W/2,150)}}
+function ctl(){const s=$(P+'n');if(!s)return;const mx=E.cur?it().max:20;s.max=mx;if(E.n>mx)E.n=mx;s.value=E.n;$(P+'nv').textContent=E.n;draw();gd()}
+function gd(){const st=[[E.ruler,XA(cfg.g1)],[!!E.cur,XA(cfg.g2)],[E.recs.length>=NEED(),XA(cfg.g3)(NEED())],[E.checked,XA(cfg.g4)]];$(P+'g').innerHTML=st.map((s,i)=>`<div class="gs ${s[0]?'d':''}">${s[0]?'✅':'⬜'} ${i+1}. ${s[1]}</div>`).join('')}
+function sum(){const o=[];keys.forEach(k=>{const R=E.recs.filter(r=>r.k==k);if(!R.length)return;const dm=R.reduce((a,r)=>a+r.L/r.n,0)/R.length,ddm=R.reduce((a,r)=>a+.5/r.n,0)/R.length;let s=`<b>${nm(k)}</b>: ${cfg.sy} = ${dm.toFixed(2)} ${mmU()}`;if(E.checked){const v=cfg.items[k].v;s+=` — ${X('эталон мән','эталонное значение','reference value')} ${v.toFixed(2)} ${mmU()} ${Math.abs(dm-v)<=.15?'✓':'≈'}`}o.push(s)});
+$(P+'sm').innerHTML=o.length?'<div class="callout" style="margin-top:8px">'+o.join('<br>')+'</div>':''}
+function tbl(){const sn=SEN(),h=sn?cfg.hdr().slice(0,5):cfg.hdr();$(P+'t').innerHTML=`<table class="rt"><tr>${h.map(x=>`<th>${x}</th>`).join('')}<th></th><th></th></tr>${E.recs.map((r,i)=>{const d=num(r.d),dd=num(r.dd);return `<tr><td>${i+1}</td><td>${nm(r.k)}</td><td>${r.n}</td><td>${r.L.toFixed(1)}</td><td><input type="text" inputmode="decimal" data-in="${P}r" data-i="${i}" data-f="d" value="${esc(r.d)}"></td>${sn?'':`<td><input type="text" inputmode="decimal" data-in="${P}r" data-i="${i}" data-f="e" value="${esc(r.e||'')}"></td>`}<td style="font-size:12px;text-align:left">${r.m||''}</td><td><button class="action-btn secondary" data-a="${P}del" data-v="${i}">✕</button></td></tr>`}).join('')}</table>`+(E.recs.length?'':`<p class="small">${X('Кесте бос: өлшеп, «Кестеге жазу» батырмасын басыңыз.','Таблица пуста: измерьте и нажмите «Записать в таблицу».','The table is empty: measure and press “Add to table”.')}</p>`);sum()}
+function ui(){if((E.sl==='sen')!==SEN()){E.sel=QQ().map(()=>'')}E.sl=S.lang;$(P+'tray').innerHTML=cfg.tray.map(t=>`<div class="tr" data-t="${t.t}">${t.ic}${XA(t.nm)}</div>`).join('');
+$(P+'b').innerHTML=`<label><b>${XA(cfg.nl)}</b> <input type="range" id="${P}n" data-in="${P}n" min="3" max="20" value="${E.n}" style="width:170px;padding:0"> <b id="${P}nv"></b></label><button class="action-btn secondary" data-a="${P}m">−</button><button class="action-btn secondary" data-a="${P}p">+</button><button class="action-btn" data-a="${P}rec">📏 ${X('Кестеге жазу','Записать в таблицу','Add to table')}</button><button class="action-btn secondary" data-a="${P}clr">🗑 ${X('Тазалау','Очистить','Clear')}</button>`;
+$(P+'qh').textContent=X('Бақылау сұрақтары','Вопросы по наблюдению','Observation questions');
+$(P+'q').innerHTML=QQ().map((q,i)=>`<div class="qrow"><label>${i+1}. ${XA(q.t)}</label><select data-ch="${P}s" data-x="${i}"><option value="">?</option>${q.ord.map(k=>`<option value="${k}" ${E.sel[i]===String(k)?'selected':''}>${XA(q.o[k])}</option>`).join('')}</select><div class="fb" id="${P}f${i}"></div></div>`).join('');
+$(P+'ck').textContent='✔ '+X('Тексеру','Проверить','Check');ctl();tbl()}
+INP[P+'n']=t=>{E.n=+t.value;$(P+'nv').textContent=E.n;draw()};
+INP[P+'r']=t=>{const r=E.recs[+t.dataset.i];if(r){r[t.dataset.f]=t.value;r.m='';E.checked=false}};
+INP[P+'s']=t=>{E.sel[+t.dataset.x]=t.value;gd()};
+ACT[P+'m']=()=>{E.n=Math.max(3,E.n-1);ctl()};ACT[P+'p']=()=>{E.n=Math.min(E.cur?it().max:20,E.n+1);ctl()};
+ACT[P+'del']=v=>{E.recs.splice(+v,1);E.checked=false;tbl();gd()};
+ACT[P+'clr']=()=>{E.recs=[];E.checked=false;$(P+'fb').textContent='';tbl();gd()};
+ACT[P+'rec']=()=>{const o=$(P+'fb');if(!E.ruler||!E.cur){o.className='fb no';o.textContent=X('Алдымен сызғыш пен денені үстелге апарыңыз.','Сначала перетащите на стол линейку и предметы.','First drag the ruler and the objects onto the table.');return}
+const L=rd(E.line);if(L<=0){o.className='fb no';o.textContent=X('Қызыл сызықты қатардың соңына апарып, L-ді оқыңыз.','Перетащите красную линию к концу ряда и снимите показание L.','Drag the red line to the end of the row and read L.');return}
+o.textContent='';E.recs.push({k:E.cur,n:E.n,L,Lt:Lt(),d:'',dd:'',m:''});E.checked=false;tbl();gd()};
+function drop(t){if(t=='ruler')E.ruler=true;else{E.cur=t;E.n=Math.min(E.n,cfg.items[t].max)}ctl();ui_tail()}
+function ui_tail(){gd();draw()}
+const setLine=x=>{E.line=Math.max(0,Math.min(cfg.maxmm,(x-x0)/sc));draw()};
+cv.addEventListener('pointerdown',e=>{if(!E.ruler)return;cv.setPointerCapture(e.pointerId);E.dr=true;setLine(pt(e,cv)[0])});
+cv.addEventListener('pointermove',e=>{if(E.dr)setLine(pt(e,cv)[0])});
+const up=()=>{E.dr=false};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+ACT[P+'chk']=()=>{const o=$(P+'fb'),M=[];let ok=true;
+if(!E.ruler){M.push('✗ '+X('сызғыш үстелге қойылмаған','линейка не на столе','the ruler is not on the table'));ok=false}
+if(SEN()){if(E.recs.length<NEED()){M.push('✗ кемінде '+NEED()+' өлшеу жаз 📏');ok=false}}else keys.forEach(k=>{const R=E.recs.filter(r=>r.k==k);if(new Set(R.map(r=>r.n)).size<2){M.push('✗ '+nm(k)+': '+X('кемінде 2 түрлі N/n-мен өлшеу керек','нужно минимум 2 измерения с разными N/n','at least 2 measurements with different N/n are needed'));ok=false}});
+E.recs.forEach((r,i)=>{const d=num(r.d),dd=num(r.dd),I=[];if(Math.abs(r.L-r.Lt)>(SEN()?2:1)){I.push(X('L оқу қате','L считано неверно','L misread'))}
+if(!isFinite(d))I.push(X('d жазылмаған','d не введено','d missing'));else if(Math.abs(d-r.L/r.n)>(SEN()?.06:.02))I.push(X('d қате','d неверно','d wrong')+' ('+(r.L/r.n).toFixed(2)+')');
+
+r.m=I.length?'<span class="no">✗ '+I.join(', ')+'</span>':'<span class="ok">✓</span>';if(I.length)ok=false});
+let qo=0;QQ().forEach((q,i)=>{const f=$(P+'f'+i),v=E.sel[i];if(v===''){f.className='fb no';f.textContent=X('Таңдаңыз','Выберите','Choose');return}const gd_=+v==q.ok;qo+=gd_;f.className='fb '+(gd_?'ok':'no');f.textContent=gd_?'✓ '+good():'✗ '+bad()});
+if(qo<QQ().length){ok=false;M.push('✗ '+X('бақылау сұрақтарына дұрыс жауап беріңіз','ответьте верно на вопросы','answer the questions correctly'))}
+E.checked=true;tbl();gd();o.className='fb '+(ok?'ok':'no');o.innerHTML=ok?'🎉 '+X('Тәжірибе сәтті орындалды!','Опыт выполнен успешно!','Experiment completed successfully!','Жарайсың! 🎉'):M.join('<br>')+(M.length?'<br>':'')+'💪 '+X('Кестедегі қателерді түзетіп, қайта тексеріңіз.','Исправьте ошибки в таблице и проверьте снова.','Fix the mistakes in the table and check again.');if(ok)award(P=='e1'?'e1':'e2')};
+trayDrag(P+'tray',cv,drop);
+return{E,ui,draw}}
+
+/* ---------- Тәжірибе 1: шарик, күріш, бұрыш ---------- */
+const it1={bead:{nm:['Шарик (моншақ)','Шарик (бусина)','Bead (ball)'],v:+RF(4.6,5.4).toFixed(2)},rice:{nm:['Күріш түйірі (ені)','Рисинка (ширина)','Rice grain (width)'],v:+RF(2.2,3.0).toFixed(2)},pepper:{nm:['Қара бұрыш','Чёрный перец','Black peppercorn'],v:+RF(3.6,4.4).toFixed(2)}};
+Object.values(it1).forEach(o=>o.max=Math.floor(110/o.v));
+const Qb=(t,o,ok)=>({t,o,ok,ord:sh(o.map((_,i)=>i))});
+const Q1=[Qb(['Бір дененің өлшемі қалай табылады?','Как найти размер одного тела?','How is the size of one body found?'],[['d = L / N','d = L / N','d = L / N'],['d = L · N','d = L · N','d = L · N'],['d = N / L','d = N / L','d = N / L']],0),
+Qb(['Үш дененің қайсысының өлшемі ең үлкен?','У какого из трёх предметов размер наибольший?','Which of the three objects is the largest?'],[['Шарик','Шарик','Bead'],['Күріш түйірі','Рисинка','Rice grain'],['Қара бұрыш','Чёрный перец','Black pepper'],['Бірдей','Одинаковые','All the same']],0),
+Qb(['Денелерді қатарға қалай қою керек?','Как выкладывать тела в ряд?','How to lay the bodies in a row?'],[['Тығыз, саңылаусыз','Плотно, без зазоров','Tightly, with no gaps'],['Саңылау қалдырып','С зазорами','With gaps'],['Ретсіз','Как попало','Randomly']],0)];
+const L1=mkLab('e1',{items:it1,n0:6,sc:6.6,x0:40,maxmm:116,jit:.3,sy:'d_орт',Q:Q1,need:6,sneed:2,Qs:[Q1[1]],
+nl:['Денелер саны N','Число предметов N','Number of objects N'],
+hint:['Сызғыш пен денелерді үстелге сүйреңіз','Перетащите линейку и предметы на стол','Drag the ruler and objects onto the table','Сызғышты және затты үстелге сүйре 👆'],
+g1:['Сызғышты үстелге апарыңыз','Перетащите линейку на стол','Drag the ruler onto the table','📏 Сызғышты үстелге сүйре'],
+g2:['Денелердің бірін (шарик, күріш, бұрыш) үстелге апарыңыз: олар сызғыштың нөлінен тығыз қатарға тізіледі','Перетащите один из предметов (шарик, рис, перец) — он выстроится плотным рядом от нуля линейки','Drag one object (bead, rice, pepper): it forms a tight row from the ruler zero','🔵 Затты үстелге сүйре. Ол өзі қатарға тізіледі'],
+g3:[n=>`N-ді жылжытқышпен таңдап, қызыл сызықты қатардың соңына апарып, L-ді оқыңыз да «Кестеге жазу» басыңыз (әр дене үшін ≥ 2 рет, барлығы ${n})`,n=>`Выберите N ползунком, подведите красную линию к концу ряда, считайте L и нажмите «Записать» (по ≥ 2 раза для каждого предмета, всего ${n})`,n=>`Choose N with the slider, drag the red line to the end of the row, read L and press “Add” (≥ 2 times per object, ${n} in total)`,n=>`🔢 N таңда. 🔴 Қызыл сызықты қатардың соңына апарып, L оқы. «Кестеге жазу» бас. ${n} рет жаса.`],
+g4:['d-ны өзіңіз есептеп кестеге жазыңыз, сұрақтарға жауап беріп «Тексеру» басыңыз','Сами вычислите d и Δd, впишите в таблицу, ответьте на вопросы и нажмите «Проверить»','Calculate d and Δd yourself, fill in the table, answer the questions and press “Check”','🧮 Есепте: d = L ÷ N. Кестеге жаз. «Тексеру» бас ✅'],
+hdr:()=>['№',X('Дене','Предмет','Object'),X('N (дана)','N (шт.)','N (pcs)'),X('L, мм','L, мм','L, mm'),'d_орт = L/N, '+X('мм','мм','mm'),X('Өлшеу қателігі Δ, мм','Погрешность измерения Δ, мм','Measurement error Δ, mm')],
+tray:[{t:'ruler',ic:IC.ruler,nm:['Сызғыш (1 мм)','Линейка (1 мм)','Ruler (1 mm)']},{t:'bead',ic:IC.bead,nm:['Шариктер','Шарики','Beads']},{t:'rice',ic:IC.rice,nm:['Күріш түйірлері','Рис','Rice grains']},{t:'pepper',ic:IC.pepper,nm:['Қара бұрыш','Чёрный перец','Black pepper']}],
+draw:(g,E,it,L,sc,x0,RY)=>{const st=L/E.n*sc,sz=it.v*sc,k=E.cur;
+for(let i=0;i<E.n;i++){const cx=x0+(i+.5)*st;
+if(k=='bead'){const r=sz/2,cy=RY-r,gr=g.createRadialGradient(cx-r*.35,cy-r*.35,r*.1,cx,cy,r);gr.addColorStop(0,'#bfdbfe');gr.addColorStop(.5,'#2563eb');gr.addColorStop(1,'#1e3a8a');g.fillStyle=gr;g.beginPath();g.arc(cx,cy,r,0,7);g.fill()}
+else if(k=='rice'){const h1=Math.abs(Math.sin(i*12.9898+1.3)*43758.5453)%1,h2=Math.abs(Math.sin(i*78.233+2.1)*12345.678)%1,rx=sz/2,ry=sz*(1.35+.12*h1),cy=RY-ry-1.5,ang=(h2-.5)*.07;
+g.save();g.translate(cx,cy);g.rotate(ang);g.shadowColor='rgba(60,40,10,.35)';g.shadowBlur=3;g.shadowOffsetX=1;g.shadowOffsetY=2;
+const gr=g.createLinearGradient(-rx,0,rx,0);gr.addColorStop(0,'#e9dfc0');gr.addColorStop(.35,'#fffdf4');gr.addColorStop(.7,'#f6efd8');gr.addColorStop(1,'#d9ceaa');
+g.fillStyle=gr;g.beginPath();g.moveTo(0,-ry);g.bezierCurveTo(rx*1.34,-ry*.62,rx*1.34,ry*.62,0,ry);g.bezierCurveTo(-rx*1.34,ry*.62,-rx*1.34,-ry*.62,0,-ry);g.closePath();g.fill();
+g.shadowColor='transparent';g.strokeStyle='rgba(150,130,80,.55)';g.lineWidth=.8;g.stroke();
+g.strokeStyle='rgba(170,150,100,.4)';g.lineWidth=.7;g.beginPath();g.moveTo(-rx*.35,-ry*.8);g.quadraticCurveTo(-rx*.45,0,-rx*.35,ry*.8);g.stroke();
+g.beginPath();g.moveTo(rx*.3,-ry*.75);g.quadraticCurveTo(rx*.4,0,rx*.3,ry*.75);g.stroke();
+g.fillStyle='rgba(120,95,40,.45)';g.beginPath();g.arc(0,-ry+1.2,.9,0,7);g.fill();
+g.restore()}
+else{const r=sz/2,cy=RY-r,gr=g.createRadialGradient(cx-r*.3,cy-r*.3,r*.1,cx,cy,r);gr.addColorStop(0,'#6b7280');gr.addColorStop(1,'#111827');g.fillStyle=gr;g.beginPath();g.arc(cx,cy,r,0,7);g.fill()}}}});
+
+/* ---------- Тәжірибе 2: бұранда қадамы ---------- */
+const PS=sh([.75,1,1.25,1.5,1.75]),pA=PS[0],pB=PS[1],pC=PS[2];
+const it2={A:{nm:['Бұранда шеге','Шуруп','Screw nail'],v:pA},B:{nm:['Бұранда болт','Болт','Bolt'],v:pB},C:{nm:['Гайка','Гайка','Nut'],v:pC}};
+Object.values(it2).forEach(o=>o.max=Math.min(30,Math.floor(46/o.v)));
+const bigger=[pA,pB,pC].indexOf(Math.max(pA,pB,pC));
+const Q2=[Qb(['Қайсысында қадам h үлкен?','У какого тела шаг h больше?','Which has the larger pitch h?'],[['Бұранда шеге','Шуруп','Screw nail'],['Бұранда болт','Болт','Bolt'],['Гайка','Гайка','Nut']],bigger),
+Qb(['Бұранда қадамы қалай табылады?','Как найти шаг резьбы?','How is the thread pitch found?'],[['h = L / N','h = L / N','h = L / N'],['h = L · N','h = L · N','h = L · N'],['h = N / L','h = N / L','h = N / L']],0),
+Qb(['Гайка қадамын қалай өлшейміз?','Как измерить шаг гайки?','How to measure the nut pitch?'],[['Бедерін қағазға түсіріп','Сделав оттиск на бумаге','By making an imprint on paper'],['Тек көзбен қарап','Только на глаз','By eye only'],['Өлшеуге болмайды','Измерить нельзя','It cannot be measured']],0)];
+const L2=mkLab('e2',{items:it2,n0:8,sc:14,x0:80,maxmm:52,jit:.2,sy:'h_орт',Q:Q2,need:4,sneed:2,Qs:[Q2[0]],
+nl:['Орам саны N','Число витков n','Number of turns n'],
+hint:['Сызғыш пен бұрандаларды үстелге сүйреңіз','Перетащите линейку и болты на стол','Drag the ruler and bolts onto the table','Сызғышты және бұранданы үстелге сүйре 👆'],
+g1:['Сызғышты үстелге апарыңыз','Перетащите линейку на стол','Drag the ruler onto the table','📏 Сызғышты үстелге сүйре'],
+g2:['Бұранданың бірін (шеге, болт немесе гайка) үстелге апарыңыз: бірінші шыңы сызғыштың нөліне сәйкес келеді','Перетащите один из болтов (A или B): первая вершина резьбы совпадёт с нулём линейки','Drag one bolt (A or B): its first crest lines up with the ruler zero','🔩 Бұранданы үстелге сүйре'],
+g3:[n=>`n-ді таңдап (жасыл және қызғылт-сары жалаушалар аралығындағы қадамдар), қызыл сызықпен L-ді оқып, «Кестеге жазу» басыңыз (әр бұранда үшін ≥ 2 рет, барлығы ${n})`,n=>`Выберите n (число шагов между зелёным и оранжевым флажками), считайте L красной линией и нажмите «Записать» (≥ 2 раза для каждого болта, всего ${n})`,n=>`Choose n (pitches between the green and orange flags), read L with the red line and press “Add” (≥ 2 times per bolt, ${n} in total)`,n=>`🔢 n таңда. 🔴 Қызыл сызықпен L оқы. «Кестеге жазу» бас. ${n} рет жаса.`],
+g4:['h-ты есептеп кестеге жазыңыз, сұрақтарға жауап беріп «Тексеру» басыңыз','Вычислите h и Δh, впишите в таблицу, ответьте на вопросы и нажмите «Проверить»','Calculate h and Δh, fill in the table, answer the questions and press “Check”','🧮 Есепте: d = L ÷ N. Кестеге жаз. «Тексеру» бас ✅'],
+hdr:()=>['№',X('Бұранда түрі','Тип','Type'),X('N (орам саны)','N (витков)','N (turns)'),X('L, мм','L, мм','L, mm'),'h = L/N, '+X('мм','мм','mm'),X('Өлшеу қателігі Δ, мм','Погрешность измерения Δ, мм','Measurement error Δ, mm')],
+tray:[{t:'ruler',ic:IC.ruler,nm:['Сызғыш (1 мм)','Линейка (1 мм)','Ruler (1 mm)']},{t:'A',ic:IC.screw('#94a3b8'),nm:it2.A.nm},{t:'B',ic:IC.screw('#d6a85c'),nm:it2.B.nm},{t:'C',ic:IC.screw('#475569'),nm:it2.C.nm}],
+draw:(g,E,it,L,sc,x0,RY)=>{const p=it.v,ps=p*sc,len=48,ex=x0+len*sc,top=130,bot=200,col=({A:['#e2e8f0','#94a3b8','#64748b'],B:['#fde68a','#d6a85c','#92400e'],C:['#cbd5e1','#475569','#1e293b']})[E.cur];
+g.save();g.shadowColor='rgba(0,0,0,.35)';g.shadowBlur=8;g.shadowOffsetY=4;
+let gr=g.createLinearGradient(0,top,0,bot);gr.addColorStop(0,col[0]);gr.addColorStop(.5,col[1]);gr.addColorStop(1,col[2]);g.fillStyle=gr;g.fillRect(x0-14,top,ex-x0+14,bot-top);g.restore();
+g.fillStyle=col[1];g.strokeStyle='#1f2937';g.lineWidth=1.2;g.beginPath();g.moveTo(x0-14,top);for(let k=0;x0+k*ps<ex;k++){const xk=x0+k*ps;g.lineTo(Math.max(x0-14,xk-ps*.4),top);g.lineTo(xk,top-8);g.lineTo(Math.min(ex,xk+ps*.4),top)}g.lineTo(ex,top);g.lineTo(ex,bot);for(let k=Math.floor(len/p);k>=0;k--){const xk=x0+(k+.5)*ps;if(xk>ex)continue;g.lineTo(Math.min(ex,xk+ps*.4),bot);g.lineTo(xk,bot+8);g.lineTo(Math.max(x0-14,xk-ps*.4),bot)}g.lineTo(x0-14,bot);g.closePath();g.fill();g.stroke();
+g.strokeStyle='rgba(15,23,42,.35)';g.lineWidth=1;for(let k=0;x0+k*ps<ex;k++){const xk=x0+k*ps;g.beginPath();g.moveTo(xk,top-8);g.lineTo(Math.min(ex,xk+ps/2),bot+8);g.stroke()}
+gr=g.createLinearGradient(0,top-14,0,bot+14);gr.addColorStop(0,col[0]);gr.addColorStop(1,col[2]);g.fillStyle=gr;g.strokeStyle='#1f2937';g.lineWidth=1.5;g.beginPath();g.moveTo(x0-72,top-14);g.lineTo(x0-24,top-14);g.lineTo(x0-14,top+20);g.lineTo(x0-14,bot-20);g.lineTo(x0-24,bot+14);g.lineTo(x0-72,bot+14);g.closePath();g.fill();g.stroke();
+g.fillStyle='#111827';g.font='bold 20px Arial';g.textAlign='center';g.fillText(E.cur,x0-46,(top+bot)/2+7);
+g.font='11px Arial';for(let k=0;k<=E.n;k++){const xk=x0+k*ps;if(E.n<=18||k%2==0){g.fillStyle=k==0?'#16a34a':k==E.n?'#ea580c':'#475569';g.fillText(String(k),xk,top-14)}}
+const xn=x0+L/p*0+ (E.n*p+(L-E.n*p))*sc;g.setLineDash([5,4]);g.lineWidth=2;g.strokeStyle='#16a34a';g.beginPath();g.moveTo(x0,top-26);g.lineTo(x0,RY);g.stroke();g.strokeStyle='#ea580c';g.beginPath();g.moveTo(x0+E.n*ps,top-26);g.lineTo(x0+E.n*ps,RY);g.stroke();g.setLineDash([]);
+g.fillStyle='#16a34a';g.fillRect(x0-1,top-40,22,12);g.fillStyle='#ea580c';g.fillRect(x0+E.n*ps-1,top-40,22,12)}});
+
+/* ---------- Тест ---------- */
+const Q=(t,ok,w)=>({t,ok,o:sh([ok,...w])});
+const bank=[
+()=>Q(X('Қатарлар әдісінің формуласы қайсы?','Какая формула метода рядов?','Which is the formula of the row method?'),'d = L / N',['d = L · N','d = N / L','d = L + N']),
+()=>Q(X('Қатарлар әдісі неге қолданылады?','Зачем применяют метод рядов?','Why is the row method used?'),X('Өте кіші дененің өлшемін сызғышпен тікелей дәл өлшеу қиын','Размер очень малого тела трудно точно измерить линейкой напрямую','A very small body is hard to measure directly with a ruler'),[X('Дененің массасын табу үшін','Чтобы найти массу тела','To find the mass of the body'),X('Дененің түсін анықтау үшін','Чтобы определить цвет тела','To find the colour of the body'),X('Температураны өлшеу үшін','Чтобы измерить температуру','To measure temperature')]),
+()=>Q(X('30 күріш түйірінің қатары L = 75 мм. Бір түйірдің ені d қанша?','Ряд из 30 рисинок имеет L = 75 мм. Чему равна ширина d одной рисинки?','A row of 30 rice grains has L = 75 mm. What is the width d of one grain?'),'2,5 '+X('мм','мм','mm'),['25 '+X('мм','мм','mm'),'0,4 '+X('мм','мм','mm'),'5 '+X('мм','мм','mm')]),
+()=>Q('Бөлік құны қалай табылады?','c = (y − x) / n',['c = (y + x) · n','c = n / (y − x)','c = y · x']),
+()=>Q('Сызғышта 0 мен 1 см аралығында 10 бөлік бар. Бөлік құны қанша?','1 мм',['1 см','10 мм','0,1 мм']),
+()=>Q('Аспаптың қателігі неге тең?','Δ = C / 2',['Δ = 2C','Δ = C · n','Δ = C + 1']),
+()=>Q(X('Бұранда қадамы h қалай есептеледі?','Как вычисляется шаг резьбы h?','How is the thread pitch h calculated?'),'h = L / n',['h = L · n','h = n / L','h = L − n']),
+()=>Q(X('Бұранданың n = 10 орамының ұзындығы L = 12,5 мм. Қадам h қанша?','10 витков резьбы занимают L = 12,5 мм. Чему равен шаг h?','10 turns of a thread span L = 12.5 mm. What is the pitch h?'),'1,25 '+X('мм','мм','mm'),['12,5 '+X('мм','мм','mm'),'0,8 '+X('мм','мм','mm'),'125 '+X('мм','мм','mm')]),
+()=>Q(X('Денелерді қатарға қалай қою керек?','Как нужно выкладывать предметы в ряд?','How should the objects be laid in a row?'),X('Саңылаусыз тығыз, сызғыш нөлінен бастап','Плотно, без зазоров, от нуля линейки','Tightly, with no gaps, starting from the zero mark'),[X('Арасында саңылау қалдырып','С зазорами между ними','With gaps between them'),X('Сызғыштың ортасынан бастап','С середины линейки','From the middle of the ruler'),X('Қалауынша, ретсіз','Как попало','Randomly')]),
+()=>Q(X('Ұсақ денелермен жұмыс істегенде не істеуге болмайды?','Чего нельзя делать при работе с мелкими предметами?','What must you never do with small objects?'),X('Ауызға, мұрынға салу','Брать в рот или нос','Put them in the mouth or nose'),[X('Жұмыстан кейін жинау','Убирать после работы','Tidy them away afterwards'),X('Қорапта сақтау','Хранить в коробке','Store them in a box'),X('Қолды жуу','Мыть руки','Wash hands')])];
+function tst(){S.T=sh(bank).slice(0,S.lang=='sen'?5:10).map(g=>g());$('tq').innerHTML=S.T.map((q,i)=>`<div class="check" style="margin-bottom:10px"><b>${i+1}. ${q.t}</b>${q.o.map(o=>`<label style="display:block;margin:4px 0"><input type="radio" name="q${i}" value="${esc(o)}"> ${esc(o)}</label>`).join('')}<button class="action-btn" data-a="q" data-v="${i}" style="margin-top:6px">${X('Тексеру','Проверить','Check')}</button><span class="fb" id="qf${i}"></span></div>`).join('');$('score').textContent=''}
+ACT.q=v=>{const i=+v,q=S.T[i],c=document.querySelector(`input[name=q${i}]:checked`),o=$('qf'+i);if(!c){o.className='fb no';o.textContent=' '+X('Жауапты таңдаңыз','Выберите ответ','Choose an answer');return}q.done=c.value==esc(q.ok);o.className='fb '+(q.done?'ok':'no');o.textContent=q.done?' ✓ '+good():' ✗ '+X('Қате. Дұрыс жауап: ','Неверно. Правильный ответ: ','Wrong. Correct answer: ','Қайта көр. Дұрыс жауап: ')+q.ok};
+$('shuf').onclick=tst;
+$('fin').onclick=()=>{const s=S.T.filter(q=>q.done).length;$('score').textContent=X(`Нәтиже: ${s} / ${S.T.length} (әр сұрақты «Тексеру» арқылы растаңыз)`,`Результат: ${s} / ${S.T.length} (подтверждайте каждый вопрос кнопкой «Проверить»)`,`Score: ${s} / ${S.T.length} (confirm each question with “Check”)`,`Нәтиже: ${s} / ${S.T.length} ${s>=S.T.length/2?'🎉 Жарайсың!':'💪 Тағы көріңіз!'}`);if(S.T.length&&s>=S.T.length*.7)award('test')};
+
+/* ---------- Рефлексия ---------- */
+function reflR(){const sn=S.lang=='sen',v=id=>S.rf[id]||'',em=['😕','🙁','😐','🙂','😀'],sel=(id,t)=>`<div class="qrow"><label>${t}</label><select data-rf="${id}"><option value="">?</option>${em.map((e,i)=>`<option value="${i+1}" ${v(id)==String(i+1)?'selected':''}>${e} ${i+1}</option>`).join('')}</select></div>`;
+$('rbox').innerHTML=`<p class="small">${X('Өзіңізді бағалаңыз: 1 — түсінбедім, 5 — өте жақсы түсіндім.','Оцените себя: 1 — не понял(а), 5 — отлично понял(а).','Rate yourself: 1 — did not understand, 5 — understood very well.','Смайликті таңда: 1 😕 — түсінбедім, 5 😀 — өте жақсы түсіндім.')}</p>`+
+sel('r1',X('Қатарлар әдісінің идеясын түсіндім (d = L/N)','Я понял(а) идею метода рядов (d = L/N)','I understood the idea of the row method (d = L/N)','Бүгінгі тақырыпты түсіндім 📏'))+
+(sn?'':sel('r2',X('Сызғышпен L-ді өзім дұрыс оқи алдым','Я сам(а) верно снимал(а) показания L линейкой','I could read L on the ruler correctly myself'))+sel('r3',X('Өлшеу қателігін есептей аламын (Δd = ΔL/N)','Я умею вычислять погрешность (Δd = ΔL/N)','I can calculate the measurement error (Δd = ΔL/N)')))+
+`<div class="qrow"><label>${X('Бүгін не білдім? Қай жері қызықты немесе қиын болды?','Что я узнал(а) сегодня? Что было интересным или трудным?','What did I learn today? What was interesting or hard?','Бүгін не білдім? ✍️')}</label><textarea data-rf="r4" rows="3">${esc(v('r4'))}</textarea></div>`+
+(sn?'':`<div class="qrow"><label>${X('Келесі жолы өлшеуді қалай жақсартар едім?','Как я улучшу измерения в следующий раз?','How would I improve the measurement next time?')}</label><textarea data-rf="r5" rows="3">${esc(v('r5'))}</textarea></div>`)+
+`<div class="actions"><button class="action-btn" data-a="rsave">💾 ${X('Рефлексияны сақтау','Сохранить рефлексию','Save reflection','Сақтау 💾')}</button></div><div class="fb" id="rfb"></div>`}
+ACT.rsave=()=>{const o=$('rfb'),sn=S.lang=='sen',ok=sn?!!(S.rf.r1&&(S.rf.r4||'').trim().length>=3):(['r1','r2','r3'].every(k=>S.rf[k])&&(S.rf.r4||'').trim().length>=10&&(S.rf.r5||'').trim().length>=10);o.className='fb '+(ok?'ok':'no');o.textContent=ok?'🎉 '+X('Рахмет! Рефлексия сақталды.','Спасибо! Рефлексия сохранена.','Thank you! Reflection saved.','Рахмет! Жарайсың! 🎉'):X('Үш бағаны таңдап, екі өрісті де толтырыңыз (кемінде 10 таңба).','Выберите три оценки и заполните оба поля (минимум 10 символов).','Choose the three ratings and fill both fields (at least 10 characters).','Смайликті таңда да, не білгеніңді жаз 😊');if(ok)award('refl')};
+
+/* ---------- Тіл (мәтіндер) ---------- */
+const D={
+hero:{kk:`<div class="badge">ЗЕРТХАНАЛЫҚ ЖҰМЫС</div><h1>Кіші денелердің өлшемін қатарлар әдісімен анықтау</h1><p>Интерактивті зерттеу моделі: шарикті, күріш түйірін және бұранда қадамын нақты сызғышпен өлшеп, қателікті есептейміз.</p><p class="obj"><b>Мақсаты:</b> қатарлар әдісімен өте кіші денелердің өлшемін анықтау және өлшеу қателігін бағалау<br><b>Қауіпсіздік:</b> зертханалық жұмыста қауіпсіздік ережелерін білу және сақтау</p>`,
+ru:`<div class="badge">ЛАБОРАТОРНАЯ РАБОТА</div><h1>Определение размеров малых тел методом рядов</h1><p>Интерактивная модель: измеряем шарик, рисинку и шаг резьбы настоящей линейкой и вычисляем погрешность.</p><p class="obj"><b>Цель:</b> определить размеры очень малых тел методом рядов и оценить погрешность измерения<br><b>Безопасность:</b> знать и соблюдать правила безопасности в лабораторной работе</p>`,
+en:`<div class="badge">LAB WORK</div><h1>Measuring the size of small bodies by the row method</h1><p>Interactive model: measure a bead, a rice grain and a thread pitch with a real ruler and calculate the error.</p><p class="obj"><b>Aim:</b> determine the size of very small bodies by the row method and estimate the measurement error<br><b>Safety:</b> know and follow the lab safety rules</p>`,
+sen:`<div class="badge">ЗЕРТХАНАЛЫҚ ЖҰМЫС</div><h1>📏 Кішкентай заттың өлшемін табамыз</h1><p>Бір-бір қадам жасаймыз. Асықпа! Қателессең — қайта көр 😊</p><p class="obj"><b>Негізгі ереже:</b> d = L ÷ N<br>🔵 бір заттың өлшемі = 📏 ұзындық ÷ 🔢 заттар саны</p><p class="obj"><b>Жол:</b> 1 🛡️ → 2 🔵 → 3 🔩 → 4 🎯 → 5 📝 → 6 ✍️ → 7 😊</p>`},
+sq:{kk:`<h2>1. Зерттеу сұрағы</h2><p><b>Өте кішкентай дененің өлшемін қатарлар әдісі арқылы қалай анықтауға болады?</b></p>`,ru:`<h2>1. Исследовательский вопрос</h2><p><b>Как определить размер очень маленького тела методом рядов?</b></p>`,en:`<h2>1. Research question</h2><p><b>How can the size of a very small body be determined by the row method?</b></p>`},
+sa:{kk:`<h2>2. Зерттеу мақсаты мен міндеттері</h2><p><b>Мақсаты:</b> қатарлар әдісі арқылы кіші денелердің өлшемін анықтауды үйрену.</p><p><b>Міндеттері:</b></p><ol><li>Кіші денелердің өлшемдерін анықтаудың қатарлар әдісін меңгеру.</li><li>Өлшеу нәтижелерін пайдаланып, кіші денелердің өлшемдерін есептеу.</li><li>Зертханалық жұмыс барысында қауіпсіздік ережелерін сақтау.</li></ol>`,ru:`<h2>2. Цель и задачи исследования</h2><p><b>Цель:</b> научиться определять размеры малых тел методом рядов.</p><p><b>Задачи:</b></p><ol><li>Освоить метод рядов для определения размеров малых тел.</li><li>По результатам измерений вычислить размеры малых тел.</li><li>Соблюдать правила безопасности во время лабораторной работы.</li></ol>`,en:`<h2>2. Aim and tasks</h2><p><b>Aim:</b> to learn to determine the size of small bodies by the row method.</p><p><b>Tasks:</b></p><ol><li>Master the row method for finding the size of small bodies.</li><li>Calculate the sizes of small bodies from the measurements.</li><li>Follow the safety rules during the lab work.</li></ol>`,sen:`<h2>2. Мақсат</h2><p>Кішкентай дененің өлшемін қатармен табамыз.</p><ol><li>Әдісті үйренеміз.</li><li>Өлшеп, есептейміз.</li><li>Қауіпсіздікті сақтаймыз.</li></ol>`},
+sh:{kk:`<h2>3. Гипотеза</h2><div class="callout hyp"><p><b>Егер</b> бірнеше бірдей кіші денені қатарға орналастырып, олардың жалпы ұзындығын өлшесек, <b>онда</b> жалпы ұзындықты денелер санына бөлу арқылы бір дененің өлшемін анықтай аламыз.</p></div>`,ru:`<h2>3. Гипотеза</h2><div class="callout hyp"><p><b>Если</b> выложить в ряд несколько одинаковых малых тел и измерить общую длину ряда, <b>то</b> разделив эту длину на число тел, можно найти размер одного тела.</p></div>`,en:`<h2>3. Hypothesis</h2><div class="callout hyp"><p><b>If</b> several identical small bodies are laid in a row and the total length is measured, <b>then</b> dividing that length by the number of bodies gives the size of one body.</p></div>`},
+th:{kk:`<h2>4. Қысқаша теория</h2><p>Өте кішкентай денелердің өлшемін сызғышпен тікелей өлшеу қиын. Сондықтан бірнеше бірдей денені қатарға қойып, олардың жалпы ұзындығын өлшейміз. Содан кейін жалпы ұзындықты денелер санына бөлеміз. Осылайша бір дененің өлшемін табамыз.</p><div class="callout"><div class="formula">d = L / N</div><ul style="margin:0"><li><b>d</b> – бір дененің өлшемі;</li><li><b>L</b> – барлық денелердің жалпы ұзындығы;</li><li><b>N</b> – денелер саны.</li></ul></div><h3>Өлшеу қателігі</h3><div class="callout warning"><ul style="margin:0"><li>Сызғыш бөлігінің мәні 1 мм болса, аспаптың абсолюттік қателігі: <b>ΔL = ½ · 1 мм = 0,5 мм</b>.</li><li>Бір дененің өлшемінің абсолюттік қателігі: <div class="formula">Δd = ΔL / N</div></li><li>Салыстырмалы қателік: <b>ε = Δd / d · 100 %</b>.</li><li>Бірнеше өлшеу болса, орташа мән: <b>d_орт = (d₁ + d₂ + … + dₖ) / k</b>.</li><li>N неғұрлым көп болса, Δd соғұрлым аз: қатар ұзарған сайын нәтиже дәлірек.</li><li>Мысалы: N = 20, L = 50 мм → d = 2,5 мм; Δd = 0,5/20 = 0,025 мм; ε = 1 %.</li></ul></div><h3>Бұранда қадамы</h3><p>Бұранда қадамы – көрші екі шыңның (орамның) арақашықтығы. n орамның ұзындығын L өлшеп, қадамды табамыз: <b>h = L / n</b>, қателігі <b>Δh = ΔL / n</b>, <b>ε = Δh / h · 100 %</b>.</p>`,
+ru:`<h2>4. Краткая теория</h2><p>Размер очень маленьких тел трудно измерить линейкой напрямую. Поэтому выкладываем в ряд несколько одинаковых тел и измеряем общую длину ряда, а затем делим её на число тел. Так находим размер одного тела.</p><div class="callout"><div class="formula">d = L / N</div><ul style="margin:0"><li><b>d</b> – размер одного тела;</li><li><b>L</b> – общая длина всех тел;</li><li><b>N</b> – число тел.</li></ul></div><h3>Погрешность измерения</h3><div class="callout warning"><ul style="margin:0"><li>При цене деления линейки 1 мм абсолютная погрешность прибора: <b>ΔL = ½ · 1 мм = 0,5 мм</b>.</li><li>Абсолютная погрешность размера одного тела: <div class="formula">Δd = ΔL / N</div></li><li>Относительная погрешность: <b>ε = Δd / d · 100 %</b>.</li><li>При нескольких измерениях среднее: <b>d_ср = (d₁ + d₂ + … + dₖ) / k</b>.</li><li>Чем больше N, тем меньше Δd: чем длиннее ряд, тем точнее результат.</li><li>Пример: N = 20, L = 50 мм → d = 2,5 мм; Δd = 0,5/20 = 0,025 мм; ε = 1 %.</li></ul></div><h3>Шаг резьбы</h3><p>Шаг резьбы – расстояние между соседними вершинами (витками). Измеряем длину L для n витков: <b>h = L / n</b>, погрешность <b>Δh = ΔL / n</b>, <b>ε = Δh / h · 100 %</b>.</p>`,
+en:`<h2>4. Brief theory</h2><p>It is hard to measure very small bodies directly with a ruler. So we lay several identical bodies in a row, measure the total length of the row, and divide it by the number of bodies. This gives the size of one body.</p><div class="callout"><div class="formula">d = L / N</div><ul style="margin:0"><li><b>d</b> – size of one body;</li><li><b>L</b> – total length of all the bodies;</li><li><b>N</b> – number of bodies.</li></ul></div><h3>Measurement error</h3><div class="callout warning"><ul style="margin:0"><li>For a ruler with 1 mm divisions the absolute instrument error is <b>ΔL = ½ · 1 mm = 0.5 mm</b>.</li><li>Absolute error of the size of one body: <div class="formula">Δd = ΔL / N</div></li><li>Relative error: <b>ε = Δd / d · 100 %</b>.</li><li>With several measurements take the mean <b>d_avg = (d₁ + d₂ + … + dₖ) / k</b>.</li><li>The larger N is, the smaller Δd is: the longer the row, the more accurate the result.</li><li>Example: N = 20, L = 50 mm → d = 2.5 mm; Δd = 0.5/20 = 0.025 mm; ε = 1 %.</li></ul></div><h3>Thread pitch</h3><p>The pitch of a thread is the distance between neighbouring crests (turns). Measure the length L of n turns: <b>h = L / n</b>, error <b>Δh = ΔL / n</b>, <b>ε = Δh / h · 100 %</b>.</p>`,
+sen:`<h2>4. Не істейміз? 🤔</h2><p>Бір шарик өте кішкентай. Оны сызғышпен өлшеу қиын. Сондықтан көп затты қатарға қоямыз 👇</p><div class="callout"><div class="formula">🔵🔵🔵🔵🔵 → L</div><div class="formula">d = L ÷ N</div><ul style="margin:0"><li>📏 L — қатардың ұзындығы</li><li>🔢 N — неше зат бар</li><li>✅ d — бір заттың өлшемі</li></ul></div><div class="callout hyp" style="margin-top:10px"><p><b>Мысал:</b> 10 күріш, L = 25 мм<br>d = 25 ÷ 10 = <b>2,5 мм</b></p></div><p>Көп зат қойсақ — өлшем дәлірек болады 👍</p><p>🔩 Бұранда қадамы: <b>h = L ÷ n</b></p>`},
+sv:{kk:`<h2>5. Тәуелсіз, тәуелді және тұрақты сақталатын шамалар</h2><div class="variables"><div class="var blue"><b>Тәуелсіз шама (өзгертетін)</b>Қатарға орналастырылатын денелер саны N (бұрандада — орам саны n).</div><div class="var green"><b>Тәуелді шама (өлшенетін)</b>Денелер қатарының жалпы ұзындығы L.</div><div class="var orange"><b>Тұрақты сақталатын шамалар</b>Денелердің өлшемі мен пішіні, денелердің бірдей болуы және оларды қатарға орналастыру тәсілі.</div></div>`,ru:`<h2>5. Независимые, зависимые и контролируемые величины</h2><div class="variables"><div class="var blue"><b>Независимая (меняем)</b>Число тел N в ряду (для резьбы – число витков n).</div><div class="var green"><b>Зависимая (измеряем)</b>Общая длина ряда тел L.</div><div class="var orange"><b>Контролируемые</b>Размер и форма тел, их одинаковость и способ укладки в ряд.</div></div>`,en:`<h2>5. Independent, dependent and controlled variables</h2><div class="variables"><div class="var blue"><b>Independent (changed)</b>Number of bodies N in the row (for a thread – number of turns n).</div><div class="var green"><b>Dependent (measured)</b>Total length L of the row of bodies.</div><div class="var orange"><b>Controlled</b>Size and shape of the bodies, their being identical, and the way they are laid in a row.</div></div>`},
+st:{kk:`<h2>6. Құралдар</h2><h3>Тәжірибе 1 (шарик, күріш, бұрыш)</h3><ul><li>сызғыш (бөлік мәні 1 мм);</li><li>шариктер (моншақ), күріш түйірлері, қара бұрыш түйірлері;</li><li>ақ қағаз парағы, қарындаш.</li></ul><h3>Тәжірибе 2 (бұранда қадамы)</h3><ul><li>қадамдары әртүрлі екі бұранда (болт);</li><li>сызғыш (бөлік мәні 1 мм), лупа, қарындаш.</li></ul>`,ru:`<h2>6. Оборудование</h2><h3>Опыт 1 (шарик, рис, перец)</h3><ul><li>линейка (цена деления 1 мм);</li><li>шарики (бусины), рисинки, горошины чёрного перца;</li><li>лист белой бумаги, карандаш.</li></ul><h3>Опыт 2 (шаг резьбы)</h3><ul><li>два болта с разным шагом резьбы;</li><li>линейка (цена деления 1 мм), лупа, карандаш.</li></ul>`,en:`<h2>6. Equipment</h2><h3>Experiment 1 (bead, rice, pepper)</h3><ul><li>ruler (1 mm divisions);</li><li>beads, rice grains, black peppercorns;</li><li>sheet of white paper, pencil.</li></ul><h3>Experiment 2 (thread pitch)</h3><ul><li>two bolts with different thread pitch;</li><li>ruler (1 mm divisions), magnifier, pencil.</li></ul>`},
+ss:{kk:`<h2>7. Қауіпсіздік ережелері</h2><div class="callout warning"><ul style="margin:0"><li>Өлшеу құралдарын дұрыс пайдалану.</li><li>Ұсақ денелерді ауызға салмау.</li><li>Жұмыс орнын таза ұстау.</li><li>Бұранданың өткір ұшынан сақ болу, оны басынан ұстау.</li><li>Жұмыстан кейін қолды жуу; қауіпті жағдайда мұғалімге хабарлау.</li></ul></div>`,ru:`<h2>7. Правила безопасности</h2><div class="callout warning"><ul style="margin:0"><li>Правильно пользоваться измерительными приборами.</li><li>Не брать мелкие предметы в рот.</li><li>Содержать рабочее место в чистоте.</li><li>Беречься острого конца болта, брать его за головку.</li><li>После работы вымыть руки; при опасности сообщить учителю.</li></ul></div>`,en:`<h2>7. Safety rules</h2><div class="callout warning"><ul style="margin:0"><li>Use measuring instruments correctly.</li><li>Never put small objects in the mouth.</li><li>Keep the workplace tidy.</li><li>Beware of the sharp tip of the bolt; hold it by the head.</li><li>Wash hands afterwards; tell the teacher about any danger.</li></ul></div>`,sen:`<h2>7. Қауіпсіздік 🛡️</h2><div class="callout warning"><ul style="margin:0"><li>🚫 Ұсақ затты ауызға салма.</li><li>⚠️ Бұранданың ұшы өткір. Басынан ұста.</li><li>🧹 Үстелді таза ұста.</li><li>🧼 Жұмыстан кейін қолыңды жу.</li><li>🙋 Қауіп болса — мұғалімге айт.</li></ul></div>`},
+so:{kk:`<h2>8. Өлшеу реті</h2><div class="grid" style="margin-top:0"><div><h3>Тәжірибе 1. Қатарлау әдісімен шариктің, күріштің және бұрыштың өлшемін өлшеу</h3><ol><li>Сызғыштың нөл белгісін тексеріңіз.</li><li>Бір түрлі денелерді (мысалы, N = 10) нөл белгісінен бастап тығыз, саңылаусыз қатарға қойыңыз.</li><li>Денелер санын N санаңыз.</li><li>Қатардың жалпы ұзындығын L өлшеңіз (қатардың соңындағы белгіні оқыңыз).</li><li>d = L/N және Δd = ΔL/N есептеңіз, кестеге жазыңыз.</li><li>Өлшеуді N-нің басқа мәнінде қайталаңыз, әр дене үшін ең кемі 2 рет.</li><li>Орташа d̄ мен нәтижені d = d̄ ± Δd түрінде жазыңыз.</li></ol></div><div><h3>Тәжірибе 2. Бұранда қадамын өлшеу</h3><ol><li>Бұранданың бірінші шыңын сызғыштың нөл белгісіне сәйкестендіріңіз.</li><li>n орамды (шыңдар аралығындағы қадамдарды) санаңыз.</li><li>n-ші шыңға дейінгі ұзындықты L өлшеңіз.</li><li>h = L/n және Δh = ΔL/n есептеңіз, кестеге жазыңыз.</li><li>Өлшеуді n-нің басқа мәнінде қайталаңыз.</li><li>Екі бұранданың қадамын салыстырыңыз.</li></ol></div></div><p class="small">Төмендегі интерактивті моделде кестені экранда өзіңіз толтырасыз.</p>`,
+ru:`<h2>8. Порядок измерений</h2><div class="grid" style="margin-top:0"><div><h3>Опыт 1. Измерение размеров шарика, рисинки и перца методом рядов</h3><ol><li>Проверьте нулевую отметку линейки.</li><li>Плотно, без зазоров выложите в ряд одинаковые тела (например, N = 10) от нулевой отметки.</li><li>Сосчитайте число тел N.</li><li>Измерьте общую длину ряда L (снимите показание у конца ряда).</li><li>Вычислите d = L/N и Δd = ΔL/N, запишите в таблицу.</li><li>Повторите при другом N, не менее 2 раз для каждого тела.</li><li>Найдите среднее d̄ и запишите результат d = d̄ ± Δd.</li></ol></div><div><h3>Опыт 2. Измерение шага резьбы</h3><ol><li>Совместите первую вершину резьбы с нулевой отметкой линейки.</li><li>Отсчитайте n витков (шагов между вершинами).</li><li>Измерьте длину L до n-й вершины.</li><li>Вычислите h = L/n и Δh = ΔL/n, запишите в таблицу.</li><li>Повторите при другом n.</li><li>Сравните шаг двух болтов.</li></ol></div></div><p class="small">Таблицу вы заполняете на экране в интерактивной модели ниже.</p>`,
+en:`<h2>8. Procedure</h2><div class="grid" style="margin-top:0"><div><h3>Experiment 1. Measuring a bead, a rice grain and a peppercorn by the row method</h3><ol><li>Check the zero mark of the ruler.</li><li>Lay identical bodies (e.g. N = 10) tightly in a row with no gaps, starting from the zero mark.</li><li>Count the number of bodies N.</li><li>Measure the total length L of the row (read the mark at its end).</li><li>Calculate d = L/N and Δd = ΔL/N and fill in the table.</li><li>Repeat with another N, at least 2 times per body.</li><li>Find the mean d̄ and write d = d̄ ± Δd.</li></ol></div><div><h3>Experiment 2. Measuring the thread pitch</h3><ol><li>Line up the first thread crest with the zero mark.</li><li>Count n turns (steps between crests).</li><li>Measure the length L up to the n-th crest.</li><li>Calculate h = L/n and Δh = ΔL/n and fill in the table.</li><li>Repeat with another n.</li><li>Compare the pitch of the two bolts.</li></ol></div></div><p class="small">You fill in the table on screen in the interactive model below.</p>`,
+sen:`<h2>8. Қалай жұмыс істейміз? 🪜</h2><div class="grid" style="margin-top:0"><div><h3>🔵 Тәжірибе 1. Шарик, күріш, бұрыш</h3><ol><li>📏 Сызғышты үстелге қой.</li><li>🔵 Затты үстелге қой. Ол қатарға тізіледі.</li><li>🔢 N таңда (неше зат).</li><li>🔴 Қызыл сызықты қатардың соңына апар. L оқы.</li><li>🧮 d = L ÷ N есепте.</li></ol></div><div><h3>🔩 Тәжірибе 2. Бұранда</h3><ol><li>🔩 Бұранданы үстелге қой.</li><li>🔢 n таңда (неше орам).</li><li>🔴 Қызыл сызықпен L оқы.</li><li>🧮 h = L ÷ n есепте.</li></ol></div></div>`},
+s1h:{kk:`Қадам 1. Қауіпсіздікті таңда`,ru:`Шаг 1. Выбери безопасное`,en:`Step 1. Choose the safe actions`,sen:`Қадам 1. Қауіпсіздік 🛡️`},
+s1p:{kk:`Әр тұжырымның қауіпсіз немесе қауіпті екенін белгілеңіз. Бәрі дұрыс болса — 🏆 ұпай аласыз!`,ru:`Отметьте, безопасно или опасно каждое утверждение. Если всё верно — получите 🏆 балл!`,en:`Mark each statement as safe or dangerous. All correct earns you a 🏆 point!`,sen:`Әр сөйлемді оқып, ✅ немесе ⛔ таңда. 👀`},
+s2h:{kk:`Қадам 4. Қызықты тапсырмалар`,ru:`Шаг 4. Занимательные задания`,en:`Step 4. Fun tasks`,sen:`Қадам 4. Қызықты тапсырмалар 🎯`},
+s2p:{kk:`Тәжірибелерден кейін қызықты үш тапсырманы орындаңыз. Әрқайсысының өз «Тексеру» батырмасы бар.`,ru:`После опытов выполните три занимательных задания. У каждого есть своя кнопка «Проверить».`,en:`After the experiments do three fun tasks. Each one has its own “Check” button.`,sen:`Есептерді шешіп, «Тексеру» бас. 🎯`},
+s3h:{kk:`Қадам 2. Тәжірибе 1. Қатарлау әдісімен шариктің, күріштің және бұрыштың өлшемін өлшеу`,ru:`Шаг 2. Опыт 1. Измерение шарика, рисинки и перца методом рядов`,en:`Step 2. Experiment 1. Measuring a bead, rice grain and peppercorn by the row method`,sen:`Қадам 2. Тәжірибе 1. Шарик, күріш, бұрыш 📏`},
+s3p:{kk:`Құралдарды сөреден үстелге сүйреңіз (телефонда — басыңыз). Сызғышты, содан соң денелердің бірін қойыңыз. Жылжытқышпен N таңдаңыз, үстелдегі сызғыштан қызыл сызықты қатардың соңына апарып L оқыңыз.`,ru:`Перетащите инструменты с полки на стол (на телефоне — нажмите). Поставьте линейку, затем один из предметов. Ползунком выберите N и подведите красную линию на линейке к концу ряда, чтобы считать L.`,en:`Drag the tools from the shelf onto the table (tap on a phone). Place the ruler, then one of the objects. Choose N with the slider and drag the red line on the ruler to the end of the row to read L.`,sen:`Сызғышты үстелге сүйре. Затты қой. Қызыл сызықты қатардың соңына апар.`},
+s4h:{kk:`Қадам 3. Тәжірибе 2. Бұранда қадамын өлшеу`,ru:`Шаг 3. Опыт 2. Измерение шага резьбы`,en:`Step 3. Experiment 2. Measuring the thread pitch`,sen:`Қадам 3. Тәжірибе 2. Бұранда қадамы 🔩`},
+s4p:{kk:`Сызғыш пен бұранданы үстелге апарыңыз. Жасыл жалау — нөлінші шың, қызғылт-сары жалау — n-ші шың. n таңдап, қызыл сызықпен L ұзындығын оқыңыз. Екі бұранданың қадамын салыстырыңыз.`,ru:`Перетащите на стол линейку и болт. Зелёный флажок — нулевая вершина, оранжевый — n-я вершина. Выберите n и считайте L красной линией. Сравните шаг двух болтов.`,en:`Drag the ruler and a bolt onto the table. The green flag marks crest 0, the orange one crest n. Choose n and read L with the red line. Compare the pitch of the two bolts.`,sen:`Сызғыш пен бұранданы қой. n таңда. L оқы.`},
+th5:{kk:`Қадам 5. Тест`,ru:`Шаг 5. Тест`,en:`Step 5. Test`,sen:`Қадам 5. Тест 📝`},
+ch:{kk:`Қадам 6. Зертханалық жұмыстың қорытындысы`,ru:`Шаг 6. Заключение лабораторной работы`,en:`Step 6. Lab work conclusion`,sen:`Қадам 6. Қорытынды ✍️`},
+cp:{kk:`Нәтижелеріңізді (d_орт, h) теориямен салыстырып, қатарлар әдісінің артықшылығын және қателікті түсіндіріңіз.`,ru:`Сравните свои результаты (d̄ ± Δd, h̄ ± Δh) с теорией, объясните преимущество метода рядов и погрешность.`,en:`Compare your results (d̄ ± Δd, h̄ ± Δh) with the theory and explain the advantage of the row method and the error.`,sen:`Не білдің? Қандай нәтиже шықты? Неге N көп болса жақсы? ✍️`},
+cl:{kk:`Оқушының қорытындысы:`,ru:`Заключение ученика:`,en:`Student's conclusion:`},
+aib:{kk:`🤖 ЖИ-мен тексеру`,ru:`🤖 Проверить с помощью ИИ`,en:`🤖 Check with AI`},dlb:{kk:`📥 Есепті жүктеу`,ru:`📥 Скачать отчёт`,en:`📥 Download report`},
+apis:{kk:`⚙ Нақты ЖИ (Claude) қосу — мұғалім үшін, міндетті емес`,ru:`⚙ Подключить настоящий ИИ (Claude) — для учителя, необязательно`,en:`⚙ Connect real AI (Claude) — for teachers, optional`},
+apin:{kk:`Кілтсіз — құрылымдық автотексеру жұмыс істейді. API кілтін енгізсеңіз, қорытынды Claude арқылы тексеріледі (кілт тек осы бетте, браузерде қалады).`,ru:`Без ключа работает структурная автопроверка. Если ввести API-ключ, заключение проверит Claude (ключ остаётся только в браузере на этой странице).`,en:`Without a key a structural auto-check runs. If you enter an API key, Claude checks the conclusion (the key stays only in your browser on this page).`},
+dl:{kk:`Мен ЖИ жауабымен келіспеймін, себебі:`,ru:`Я не согласен с ответом ИИ, потому что:`,en:`I disagree with the AI answer because:`},
+cph:{kk:`Өз қорытындыңызды осы жерге жазыңыз...`,ru:`Напишите своё заключение здесь...`,en:`Write your conclusion here...`,sen:`Мен бүгін ... білдім. Менің нәтижем: d = ... мм`},dph:{kk:`Қай жерімен келіспейсіз? Дәлеліңізді жазыңыз...`,ru:`С чем именно вы не согласны? Приведите аргументы...`,en:`What exactly do you disagree with? Give your arguments...`},
+rh:{kk:`Қадам 7. Рефлексия`,ru:`Шаг 7. Рефлексия`,en:`Step 7. Reflection`,sen:`Қадам 7. Қалай болды? 😊`},
+foot:{kk:`Зертханалық жұмыс • Қатарлар әдісі • Интерактивті зерттеу моделі`,ru:`Лабораторная работа • Метод рядов • Интерактивная исследовательская модель`,en:`Lab work • The row method • Interactive research model`}};
+/* ---- жаңартылған мәтіндер (7-сынып) ---- */
+const FM=t=>`<div class="formula">${t}</div>`;
+D.hero={kk:`<div class="badge">ЗЕРТХАНАЛЫҚ ЖҰМЫС</div><h1>Кіші денелердің өлшемдерін анықтау</h1><p>Интерактивті модель: шарикті, күріш түйірін, бұрышты және бұранда қадамын сызғышпен өлшеп, аспаптың бөлік құнын анықтаймыз.</p><p class="obj"><b>Мақсаты:</b> қатарлар әдісімен кіші денелердің өлшемдерін анықтау; аспаптың бөлік құнын табуды үйрену</p>`,sen:D.hero.sen};
+D.sa={kk:`<h2>2. Зертханалық жұмыстың міндеттері</h2><ol><li>Кіші денелерді қатар орналастырып, олардың жалпы ұзындығын сызғышпен өлшеу.</li><li>Бір кіші дененің өлшемін анықтау формуласын қолдану: ${FM('d = L / N')}</li><li>Зертханалық жұмыс барысында қауіпсіздік техникасы ережелерін сақтау.</li></ol>`,sen:D.sa.sen};
+D.th={kk:`<h2>4. Қысқаша теория</h2><p>Өте кішкентай денені сызғышпен тікелей өлшеу қиын. Сондықтан бірнеше бірдей денені қатарға тығыз қойып, қатардың ұзындығын өлшейміз де, денелер санына бөлеміз. Бұл — <b>қатарлау әдісі</b>.</p><div class="callout">${FM('d_орт = L / N')}<ul style="margin:0"><li><b>d_орт</b> – бір дененің орташа өлшемі (диаметрі);</li><li><b>L</b> – қатар ұзындығы;</li><li><b>N</b> – қатардағы денелер саны.</li></ul></div><h3>Бөлік құны</h3><div class="callout"><p style="margin-top:0">Бөлік құны — өлшеуіш құралдың шкаласындағы ең кіші бір бөліктің мәні.</p><p>Бөлік құнын табу үшін мына формуланы қолданамыз:</p>${FM('C = (a₂ − a₁) / n')}<p>Мұндағы:</p><ul><li><b>C</b> – бір бөліктің құны;</li><li><b>a₂ − a₁</b> – шкаладағы екі санның айырмасы;</li><li><b>n</b> – сол екі санның арасындағы бөліктер саны.</li></ul><p><b>Мысал:</b> сызғыштың шкаласында 2 см мен 4 см аралығы 10 бөлікке бөлінген.</p><ol><li>Екі санның айырмасын табамыз: 4 − 2 = 2 см.</li><li>Бөліктер санын есептейміз: n = 10.</li><li>Формулаға қоямыз: ${FM('C = (4 − 2) / 10 = 2 / 10 = 0,2 см')}</li></ol><p><b>Жауабы:</b> бір бөліктің құны 0,2 см немесе 2 мм.</p><p style="margin-bottom:0"><b>Есте сақта:</b> екі көршілес санның айырмасын олардың арасындағы бөліктер санына бөлесің.</p></div><h3>Өлшеу қателігі</h3><div class="callout warning"><ul style="margin:0"><li>Өлшеу қателігі бөлік құнының жартысына тең: ${FM('Δ = C / 2')}</li><li>Мысалы: C = 1 мм болса, Δ = 0,5 мм.</li><li>Өлшеу нәтижесі: <b>a = a_өлш ± Δ</b>.</li></ul></div><h3>Бұранда қадамы</h3><p>Бұранда қадамы – қатар жатқан екі орамның арақашықтығы. N орамның ұзындығы L өлшенеді: ${FM('h = L / N')}</p>`};
+D.sv={kk:`<h2>5. Тәуелсіз, тәуелді және тұрақты шамалар</h2><div class="variables"><div class="var blue"><b>Тәуелсіз (өзгертетін)</b>Қатардағы денелер саны N (бұрандада – орам саны N).</div><div class="var green"><b>Тәуелді (өлшенетін)</b>Қатар ұзындығы L.</div><div class="var orange"><b>Тұрақты шамалар</b>Денелердің өлшемі мен пішіні, оларды қатарға қою тәсілі.</div></div>`};
+D.st={kk:`<h2>6. Құралдар</h2><h3>1-тәжірибе</h3><ul><li>сызғыш (бөлік құны 1 мм);</li><li>шариктер (моншақ), күріш және қара бұрыш түйірлері;</li><li>ақ қағаз, қарындаш.</li></ul><h3>2-тәжірибе</h3><ul><li>бұранда шеге, бұранда болт, гайка;</li><li>сызғыш (бөлік құны 1 мм), қарындаш, қағаз.</li></ul>`};
+D.so={kk:`<h2>8. Өлшеу реті</h2><div class="grid" style="margin-top:0"><div><h3>1-тәжірибе. Шариктің, күріштің, бұрыштың өлшемін өлшеу</h3><ol><li>Сызғыш шкаласының бойымен бірнеше шариктерді жинақтап бір-бірімен түйістіріңдер, шариктер қатарының ұзындығын өлшеңдер. Қатар ұзындығы L-ді қатардағы шариктердің санына N бөліп, бір шариктің орташа диаметрін анықтаңдар: ${FM('d_орт = L / N')}</li><li>Ұсақ денелердің өлшемдерін анықтайтын мұндай тәсіл қатарлау тәсілі деп аталады. Қатарлау тәсілімен күріш пен бұрыштың өлшемдерін (диаметрлерін) де анықтауға болады.</li><li>Өлшеу мен есептеу нәтижелерін кестеге жазыңдар.</li></ol></div><div><h3>2-тәжірибе. Бұранда қадамын өлшеу</h3><ol><li>Бұранда қадамы деп қатар жатқан орам оймаларының арақашықтығын айтады. Қадам өте аз болғандықтан, қатарлау тәсілі қолданылады.</li><li>Бұранда шегенің немесе болттың орам оймалары орналасқан бөлігінің ұзындығын L сызғышпен өлшеңдер. Орам санын N мұқият санаңдар: ${FM('h = L / N')}</li><li>Гайканың қадамын анықтау үшін оймасының бедерін қағазға түсіріп алыңдар: бұранда оймасы бар бетті сиямен немесе жұмсақ графитпен (қарындашпен) бояп, қағазға басыңдар да өлшеңдер.</li><li>Нәтижені кестеге жазыңдар.</li></ol></div></div>`};
+D.cp={kk:`Нәтижелеріңізді (d_орт, h) теориямен салыстырып, қатарлар әдісін және аспаптың бөлік құнын түсіндіріңіз.`,sen:D.cp.sen};
+/* ---- бөлік құны: екі фото-тапсырма ---- */
+function rulerSvg(a){let t='';for(let i=0;i<=20;i++){const x=20+i*26,l=i%10==0?30:i%5==0?22:14;t+=`<line x1="${x}" y1="0" x2="${x}" y2="${l}" stroke="#222"/>`;if(i%10==0)t+=`<text x="${x}" y="50" text-anchor="middle" font-size="17" font-weight="bold">${a+i/10}</text>`}
+return`<svg viewBox="0 0 560 150" style="width:100%;max-width:520px;border-radius:12px"><defs><linearGradient id="wd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b88650"/><stop offset="1" stop-color="#8f5d30"/></linearGradient></defs><rect width="560" height="150" fill="url(#wd)"/><rect x="8" y="46" width="544" height="76" fill="rgba(0,0,0,.25)"/><rect x="4" y="38" width="544" height="76" fill="#fbf3c8" stroke="#8a7a3a"/><g transform="translate(0,38)">${t}<text x="530" y="68" font-size="13" text-anchor="end">см</text></g></svg>`}
+function cylSvg(P){let t='';const H0=250,top=20,y=v=>top+H0-v/(5*P.s)*H0;for(let i=0;i<=5*P.m;i++){const v=i*P.s/P.m,l=i%P.m==0;t+=`<line x1="${l?112:118}" y1="${y(v)}" x2="130" y2="${y(v)}" stroke="#222"/>`;if(l&&i)t+=`<text x="106" y="${y(v)+4}" text-anchor="end" font-size="13" font-weight="bold">${v}</text>`}
+return`<svg viewBox="0 0 220 300" style="width:100%;max-width:220px;border-radius:12px;background:#eef2f7"><rect x="110" y="${top}" width="46" height="${H0}" fill="#e0f2fe" stroke="#475569" stroke-width="2"/><rect x="111" y="${y(P.w)}" width="44" height="${top+H0-y(P.w)}" fill="#38bdf8" opacity=".8"/>${t}<text x="190" y="290" font-size="13">мл</text></svg>`}
+function PH(){if(!S.ph){const V=[[20,4],[50,5],[100,5]][RI(0,2)];S.ph={a:RI(1,8),s:V[0],m:V[1],w:RI(1,5*V[1]-1)*V[0]/V[1]}}const v=i=>S.tv[i]==null?'':S.tv[i];
+return`<div class="check"><h3>📷 2-тапсырма. Сызғыштың бөлік құны</h3>${rulerSvg(S.ph.a)}<div class="qrow"><label>Суретте ${S.ph.a} және ${S.ph.a+1} цифрларының арасында қанша бөлік бар? Бөлік құнын C = (a₂ − a₁) / n формуласымен табыңыз (мм).</label><input type="text" inputmode="decimal" data-tv="p1" value="${v('p1')}" style="max-width:160px"></div></div>
+<div class="check"><h3>📷 3-тапсырма. Мензурканың бөлік құны</h3>${cylSvg(S.ph)}<div class="qrow"><label>Көрші цифрлар арасындағы бөліктер санын санап, бөлік құнын табыңыз (мл).</label><input type="text" inputmode="decimal" data-tv="p2" value="${v('p2')}" style="max-width:160px"></div><button class="action-btn" data-a="tkE">Тексеру</button><div class="fb" id="tkEf"></div></div>`}
+ACT.tkE=()=>{const a=num(S.tv.p1),b=num(S.tv.p2);if(isNaN(a)||isNaN(b)){FB('tkEf',0,'Екі жауапты да жазыңыз.');return}const r1=Math.abs(a-1)<=.01,r2=Math.abs(b-S.ph.s/S.ph.m)<=.01;FB('tkEf',r1&&r2,`${r1?'✓':'✗'} сызғыш: c = (y − x)/n ${r2?'✓':'✗'} мензурка: c = ${S.ph.s}/${S.ph.m}`.replace('✗ мензурка: c = '+S.ph.s+'/'+S.ph.m,r2?'':'✗ мензурка: қайта санаңыз'));if(r1&&r2)award('err')};
+/* ---- рефлексия: оқушы өзі жазады ---- */
+function reflR(){const sn=S.lang=='sen',P=[['r1','Бүгін зертханалық жұмыста мен нені үйрендім?','Мен бүгін ... үйрендім.'],['r2','Маған не қызықты немесе қиын болды?','Маған ... қызықты/қиын болды, себебі ...'],['r3','Қатарлар әдісін және бөлік құнын өз сөзіммен түсіндір.','Қатарлар әдісі — ... Бөлік құны — ...'],['r4','Келесі жолы жұмысты қалай жақсартар едім?','Келесі жолы мен ...']];
+$('rbox').innerHTML=P.slice(0,sn?2:4).map(p=>`<div class="qrow"><label>${p[1]}</label><textarea data-rf="${p[0]}" rows="3" placeholder="${p[2]}">${esc(S.rf[p[0]]||'')}</textarea></div>`).join('')+`<div class="actions"><button class="action-btn" data-a="rsave">💾 Рефлексияны сақтау</button></div><div class="fb" id="rfb"></div>`}
+ACT.rsave=()=>{const o=$('rfb'),n=S.lang=='sen'?2:4,ok=['r1','r2','r3','r4'].slice(0,n).every(k=>(S.rf[k]||'').trim().length>=10);o.className='fb '+(ok?'ok':'no');o.textContent=ok?'🎉 Рахмет! Рефлексия сақталды.':'Әр сұраққа өз сөзіңізбен жазыңыз (кемінде 10 таңба).';if(ok)award('refl')};
+
+const oph=new Map();document.querySelectorAll('[data-ph]').forEach(e=>oph.set(e,e.dataset.ph));
+const TB={kk:['🖨 Басып шығару','📄 PDF-ке айналдыру','PDF сақтау үшін ашылған терезеде принтер ретінде «PDF ретінде сақтау» (Save as PDF) таңдаңыз.'],ru:['🖨 Печать','📄 Сохранить в PDF','В окне печати выберите принтер «Сохранить как PDF» (Save as PDF).'],en:['🖨 Print','📄 Save as PDF','In the print dialog choose “Save as PDF” as the printer.'],sen:['🖨 Басып шығару','📄 PDF-ке айналдыру','Ашылған терезеде «PDF ретінде сақтау» таңдаңыз.']};
+function setLang(l){S.lang=l;document.body.className=l=='sen'?'sen':'';document.documentElement.lang=l=='ru'?'ru':l=='en'?'en':'kk';
+document.querySelectorAll('[data-i]').forEach(e=>{const d=D[e.dataset.i];if(d)e.innerHTML=d[l]||d.kk});
+document.querySelectorAll('[data-ph]').forEach(e=>{const d=D[e.dataset.ph];if(d)e.placeholder=d[l]||d.kk});
+document.title=X('Зертханалық жұмыс — Кіші денелердің өлшемдерін анықтау','Лабораторная работа — Определение размеров малых тел','Lab work — Determining the size of small bodies');
+document.querySelectorAll('#lang button').forEach(b=>b.classList.toggle('on',b.dataset.l==l));
+$('nl1').textContent=X('Оқушының аты-жөні:','Фамилия и имя ученика:','Student full name:');$('nl2').textContent=X('Сыныбы:','Класс:','Class:');$('printBtn').textContent=TB[l][0];$('pdfBtn').textContent=TB[l][1];
+$('shuf').textContent='🔀 '+X('Араластыру (сұрақтар мен жауаптар)','Перемешать (вопросы и ответы)','Shuffle (questions and answers)');$('fin').textContent=X('Нәтижені көрсету','Показать результат','Show score');
+safeR();tkR();L1.ui();L2.ui();tst();reflR();updSc();$('aiOut').style.display='none';$('disw').style.display='none'}
+$('lang').onclick=e=>{const b=e.target.closest('[data-l]');if(b)setLang(b.dataset.l)};
+
+/* ---------- ЖИ тексеру ---------- */
+function localCheck(t){const ss=t.split(/[.!?\n]+/),sn=(...r)=>ss.some(s=>r.every(x=>x.test(s)));
+const C=[[/L\s*\/\s*N|d\s*=\s*L|бөл|разд|divid/i.test(t),X('d = L/N формуласы','Формула d = L/N','The formula d = L/N')],
+[/қатар|ряд|row/i.test(t),X('Қатарлар әдісі','Метод рядов','The row method')],
+[/бөлік құн|цена дел|division/i.test(t),X('Аспаптың бөлік құны','Цена деления','Division value')],
+[/тығыз|саңылау|плотн|tight|gap/i.test(t),X('Қатарға тығыз қою','Плотная укладка','Tight row')],
+[/сызғыш|линейк|ruler/i.test(t),X('Сызғышпен өлшеу','Измерение линейкой','Ruler measurement')],
+[/қадам|шаг|pitch|h\s*=/i.test(t),X('Бұранда қадамы h = L/n','Шаг резьбы h = L/n','Thread pitch h = L/n')],
+[/\d+[.,]?\d*\s*(мм|mm)/i.test(t),X('Өз нәтижеңіз (сан мен бірлік)','Ваш результат (число и единица)','Your own result (number and unit)')],
+[/қауіпсіз|безопас|safety|ауызға|рот|mouth|өткір|остр|sharp/i.test(t),X('Қауіпсіздік ережелері','Правила безопасности','Safety rules')]];
+const n=C.filter(c=>c[0]).length;return`<b>${X('Автотексеру','Автопроверка','Auto-check')}: ${n}/${C.length}</b><br>`+C.map(c=>(c[0]?'✓ ':'✗ ')+c[1]+(c[0]?'':X(' — қосыңыз',' — добавьте',' — please add'))).join('<br>')+'<br>'+(n>=6?X('Өте жақсы!','Отлично!','Excellent!','Жарайсың! 🎉'):X('Жетіспейтін тармақтарды қосып, қайта тексеріңіз.','Добавьте недостающие пункты и проверьте снова.','Add the missing points and check again.','Жетпейтін жерін толықтырып, қайта тексер. 💪'))}
+$('aib').onclick=async()=>{const t=$('conc').value.trim(),o=$('aiOut');o.style.display='block';$('disw').style.display='block';
+if(t.length<20){o.innerHTML=X('Қорытындыны толығырақ жазыңыз (кемінде бірнеше сөйлем).','Напишите заключение подробнее (хотя бы несколько предложений).','Please write a longer conclusion (a few sentences).');return}
+let h='🤖 '+localCheck(t);const key=$('apik').value.trim();
+if(key){o.innerHTML='⏳ ...';try{const L={kk:'Kazakh',ru:'Russian',en:'English',sen:'very simple Kazakh with short friendly sentences (student with special educational needs)'}[S.lang];
+const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-5-5',max_tokens:600,messages:[{role:'user',content:`You are a physics teacher checking a school student's conclusion for a lab on measuring the size of small bodies (bead, rice grain, peppercorn) and the pitch of a screw thread by the row method. Facts: lay N identical bodies tightly in a row from the zero mark, measure total length L, then d = L/N; ruler division value is 1 mm; mean d_avg = mean(d); thread pitch h = L/N for N turns; division value c = (y-x)/n; safety: never put small objects in the mouth, handle bolts by the head, keep the workplace tidy. Student conclusion: """${t}""". Say what is correct, what is missing or wrong, and give one tip. Max 120 words. Answer in ${L}.`}]})});const j=await r.json();if(!j.content)throw 0;h='🤖 Claude:<br>'+esc(j.content.map(c=>c.text||'').join('')).replace(/\n/g,'<br>')}catch(e){h+='<br><i>(Claude қосылмады / API error — '+X('автотексеру көрсетілді','показана автопроверка','auto-check shown')+')</i>'}}
+o.innerHTML=h;award_conc()};
+function award_conc(){/* қорытынды ұпайға әсер етпейді */}
+const recTxt=(E,nmf)=>E.recs.map((r,i)=>`${i+1}) ${nmf(r.k)}: n=${r.n}, L=${r.L.toFixed(1)}, d/h=${r.d}, Δ=${r.dd}`).join('\n');
+$('dlb').onclick=()=>{const b=new Blob([`${document.title}\n\n${X('Оқушының аты-жөні','ФИО ученика','Student')}: ${$('stName').value}   ${X('Сыныбы','Класс','Class')}: ${$('stCls').value}\n\n${X('Ұпай','Баллы','Points')}: ${S.sc.size}/${TOT()}\n\n${X('Тәжірибе 1','Опыт 1','Experiment 1')}:\n${recTxt(L1.E,k=>XA(it1[k].nm))}\n\n${X('Тәжірибе 2','Опыт 2','Experiment 2')}:\n${recTxt(L2.E,k=>XA(it2[k].nm))}\n\n${X('Қорытынды','Заключение','Conclusion')}:\n${$('conc').value}\n\nAI:\n${$('aiOut').innerText}\n\n${X('Келіспеймін','Не согласен(на)','Disagreement')}:\n${$('dis').value}\n\n${X('Рефлексия','Рефлексия','Reflection')}:\n${[1,2,3,4].map(i=>S.rf['r'+i]||'-').join('\n')}\n`],{type:'text/plain'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='lab_report.txt';a.click()};
+
+/* ---------- Басып шығару / PDF ---------- */
+$('printBtn').onclick=()=>setTimeout(()=>window.print(),50);
+$('pdfBtn').onclick=()=>{alert(TB[S.lang][2]);setTimeout(()=>window.print(),50)};
+
+/* ---------- Оқиғалар ---------- */
+document.addEventListener('click',e=>{const a=e.target.closest('[data-a]');if(a&&ACT[a.dataset.a])ACT[a.dataset.a](a.dataset.v,a)});
+document.addEventListener('change',e=>{const t=e.target,k=t.dataset&&t.dataset.ch;if(k&&INP[k])INP[k](t);if(t.dataset&&t.dataset.tv!=null)S.tv[t.dataset.tv]=t.value;if(t.dataset&&t.dataset.rf)S.rf[t.dataset.rf]=t.value});
+document.addEventListener('input',e=>{const t=e.target,k=t.dataset&&t.dataset.in;if(k&&INP[k])INP[k](t);if(t.dataset&&t.dataset.tv!=null)S.tv[t.dataset.tv]=t.value;if(t.dataset&&t.dataset.rf)S.rf[t.dataset.rf]=t.value});
+genK();
+setLang('kk');
+})();
+</script>
+</body>
+</html>
